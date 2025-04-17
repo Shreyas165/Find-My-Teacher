@@ -11,4 +11,8 @@
     "@prisma/client": "^x.x.x",
     "sharp": "^0.33.5"
   }
+  "scripts": {
+  "postinstall": "prisma generate"
+}
+
 }
