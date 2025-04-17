@@ -10,7 +10,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const prisma = new PrismaClient();
 
-app.use(cors());
+app.use(cors({
+    origin: ['https://find-my-teacher.vercel.app'], // replace this with your deployed Vercel frontend URL
+    credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/images', express.static(path.join(__dirname, 'public', 'images')));
