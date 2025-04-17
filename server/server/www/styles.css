@@ -1,0 +1,171 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: rgba(255, 255, 255, 0.5);
+    background-image: url("p2.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    filter: 100%;
+    margin: 100px;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+
+}
+
+.container {
+    font-size: 20px;
+    width: 50%;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    align-content: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-left: 20%;
+    margin-right: 20%;
+    height: 80%;
+    text-align: center;
+}
+
+h1 {
+    color: #ffffff;
+    margin-bottom: 20px;
+}
+
+p {
+    color: #555;
+}
+
+.form-group {
+    margin: 20px 0;
+
+}
+
+label {
+    font-size: 18px;
+    display: block;
+    margin-bottom: 8px;
+    color: #f2eaea;
+}
+
+select,
+input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007BFF;
+    color: #fff;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.lost-button {
+    margin-top: 30px;
+    background-color: #dc3545;
+}
+
+.lost-button:hover {
+    background-color: #a71d2a;
+}
+
+table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+
+table,
+th,
+td {
+    border: 1px solid #ddd;
+}
+
+th,
+td {
+    padding: 10px;
+    text-align: center;
+}
+
+th {
+    background-color: #f1f1f1;
+    font-weight: bold;
+}
+
+td[contenteditable="true"] {
+    background-color: #fff9c4;
+    cursor: text;
+}
+
+.message-box {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    text-align: left;
+    color: #444;
+}
+
+#directions-display {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+#directions-display p {
+    flex: 1;
+    margin: 0;
+}
+
+#directions-image-container {
+    max-width: 150px;
+    height: auto;
+}
+
+#directions-display img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+}
+
+#directions-container {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+#directions-text {
+    flex: 1;
+    word-wrap: break-word;
+    overflow-wrap: break-word;/
+}
+
+#teacher-image {
+    max-width: 50%;
+    max-height: 170px;
+    object-fit: cover;
+    border-radius: 5px;
+    color: #f1f1f1;
+}
