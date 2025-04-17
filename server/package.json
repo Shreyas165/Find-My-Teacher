@@ -10,7 +10,7 @@
     "rimraf": "^6.0.1",
     "@prisma/client": "^6.6.0",
     "sharp": "^0.33.5"
-  }
+  },
   "scripts": {
   "postinstall": "prisma generate"
 }
