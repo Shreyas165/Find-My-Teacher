@@ -5,9 +5,9 @@ const addTeacherBtn = document.getElementById("add-teacher-btn");
 const submitTeacherButton = document.getElementById("submit-teacher");
 const addTeacherForm = document.getElementById("add-teacher-form");
 
-const getTeachersEndpoint = "http://localhost:3000/api/people";
-const getDirectionsEndpoint = "http://localhost:3000/api/directions/";
-const addTeacherEndpoint = "http://localhost:3000/api/add-teacher";
+const getTeachersEndpoint = "https://find-my-teacher.onrender.com/api/people";
+const getDirectionsEndpoint = "https://find-my-teacher.onrender.com/api/directions/";
+const addTeacherEndpoint = "https://find-my-teacher.onrender.com/api/add-teacher";
 
 async function loadTeachers() {
     try {
