@@ -19,7 +19,7 @@ model Teacher {
   floor      String
   branch     String
   directions String
-  image      String
+  image      Bytes?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
