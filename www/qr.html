@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+
+        h1 {
+            margin-top: 20px;
+            color: #333;
+        }
+
+        #qrcode {
+            margin: 20px auto;
+            display: inline-block;
+            background: #fff;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+        }
+
+        p {
+            color: #555;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>QR Code for Your Link</h1>
+    <p>Scan the QR code below to open your custom link.</p>
+    <div id="qrcode"></div>
+    <button id="save-qr">Download QR Code</button>
+
+    <script>
+
+        const customLink = "http://192.168.62.229:3000";
+
+        const qrCodeContainer = document.getElementById("qrcode");
+
+
+        const qr = new QRCode(qrCodeContainer, {
+            text: customLink,
+            width: 200,
+            height: 200,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H,
+        });
+
+
+        document.getElementById("save-qr").addEventListener("click", function () {
+            const canvas = qrCodeContainer.querySelector("canvas");
+            const link = document.createElement("a");
+            link.href = canvas.toDataURL("image/png");
+            link.download = "qr-code.png";
+            link.click();
+        });
+    </script>
+</body>
+
+</html>
