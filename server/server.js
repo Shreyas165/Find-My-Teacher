@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require("express");
 const cors = require("cors");
 const fs = require("fs").promises;
@@ -105,7 +106,7 @@ app.get("/api/directions/:name", async (req, res) => {
         }
 
         const imageUrl = teacher.image
-            ? `https://find-my-teacher.onrender.com${teacher.image}`
+            ? `${req.protocol}://${req.get('host')}${teacher.image}`
             : null;
 
         res.status(200).json({
@@ -121,18 +122,12 @@ app.get("/api/directions/:name", async (req, res) => {
     }
 });
 
-// Use memoryStorage instead of saving to disk
-const upload1 = multer({ storage: multer.memoryStorage() });
-
-app.post("/api/add-teacher", upload.single("image"), async (req, res) => {
+app.post("/api/add-teacher", upload.single("image"), resizeImage, async (req, res) => {
     try {
-        console.log("Received file:", req.file);  // Log the received file
-        console.log("Form Data:", req.body);      // Log the rest of the form data
-
         const { name, floor, branch, directions } = req.body;
-        const imageBuffer = req.file ? req.file.buffer : null;
+        const image = req.file ? `/images/${req.file.filename}` : null;
 
-        if (!name || !floor || !branch || !directions || !imageBuffer) {
+        if (!name || !floor || !branch || !directions || !image) {
             return res.status(400).json({ error: "All fields are required." });
         }
 
@@ -142,7 +137,7 @@ app.post("/api/add-teacher", upload.single("image"), async (req, res) => {
                 floor,
                 branch,
                 directions,
-                image: imageBuffer 
+                image
             }
         });
 
@@ -152,27 +147,6 @@ app.post("/api/add-teacher", upload.single("image"), async (req, res) => {
         res.status(500).json({ error: "Failed to add teacher." });
     }
 });
-
-app.get("/api/teacher-image/:name", async (req, res) => {
-    try {
-        const teacher = await prisma.teacher.findFirst({
-            where: { name: req.params.name },
-            select: { image: true }
-        });
-
-        if (!teacher || !teacher.image) {
-            return res.status(404).json({ error: "Image not found." });
-        }
-
-        res.set("Content-Type", "image/png"); // or detect MIME type dynamically if needed
-        res.send(teacher.image);
-    } catch (error) {
-        console.error("Error fetching image:", error);
-        res.status(500).json({ error: "Failed to fetch image." });
-    }
-});
-
-
 
 app.put("/api/update-teacher/:name", async (req, res) => {
     try {
