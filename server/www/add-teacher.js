@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     const teacherForm = document.getElementById("teacher-form");
-    const addTeacherEndpoint = "http://localhost:3000/api/add-teacher";
+    const addTeacherEndpoint = "https://find-my-teacher.onrender.com/api/add-teacher";
 
     teacherForm.addEventListener("submit", async (event) => {
         event.preventDefault();
