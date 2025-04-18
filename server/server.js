@@ -19,7 +19,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/images', express.static(path.join(__dirname, 'public', 'images')));
 app.use(express.static(path.join(__dirname, 'public')));
-// added this line and moved all your static files [ CSS, HTML, JS ] to 'www' folder
 app.use(express.static(__dirname + '/www'));
 
 const storage = multer.diskStorage({
@@ -66,7 +65,7 @@ const resizeImage = async (req, res, next) => {
         req.file.path = resizedFilePath;
         req.file.filename = path.basename(resizedFilePath);
 
-        await fs.unlink(filePath);
+        await fs.unlink(filePath); // Delete the original file after resizing
         next();
     } catch (err) {
         console.error("Error resizing image:", err);
@@ -123,10 +122,19 @@ app.get("/api/directions/:name", async (req, res) => {
 });
 
 app.post("/api/add-teacher", upload.single("image"), resizeImage, async (req, res) => {
-    try {
-        const { name, floor, branch, directions } = req.body;
-        const image = req.file ? `/images/${req.file.filename}` : null;
+    const { name, floor, branch, directions } = req.body;
+    const image = req.file ? `/images/${req.file.filename}` : null;
 
+    // Log data before processing
+    console.log({
+        name,
+        floor,
+        branch,
+        directions,
+        image,
+    });
+
+    try {
         if (!name || !floor || !branch || !directions || !image) {
             return res.status(400).json({ error: "All fields are required." });
         }
@@ -144,6 +152,12 @@ app.post("/api/add-teacher", upload.single("image"), resizeImage, async (req, re
         res.status(201).json({ message: "Teacher added successfully!" });
     } catch (error) {
         console.error("Error adding teacher:", error);
+
+        // Check if error is due to unique constraint violation
+        if (error.code === 'P2002') {
+            return res.status(400).json({ error: "Teacher with this name already exists." });
+        }
+
         res.status(500).json({ error: "Failed to add teacher." });
     }
 });
@@ -189,7 +203,6 @@ app.delete("/api/delete-teacher/:name", async (req, res) => {
     }
 });
 
-// Start server
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
 });
