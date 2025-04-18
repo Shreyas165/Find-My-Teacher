@@ -126,6 +126,9 @@ const upload1 = multer({ storage: multer.memoryStorage() });
 
 app.post("/api/add-teacher", upload.single("image"), async (req, res) => {
     try {
+        console.log("Received file:", req.file);  // Log the received file
+        console.log("Form Data:", req.body);      // Log the rest of the form data
+
         const { name, floor, branch, directions } = req.body;
         const imageBuffer = req.file ? req.file.buffer : null;
 
@@ -149,6 +152,7 @@ app.post("/api/add-teacher", upload.single("image"), async (req, res) => {
         res.status(500).json({ error: "Failed to add teacher." });
     }
 });
+
 app.get("/api/teacher-image/:name", async (req, res) => {
     try {
         const teacher = await prisma.teacher.findFirst({
