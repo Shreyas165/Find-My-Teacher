@@ -107,7 +107,7 @@ app.get("/api/teacher-image/:name", async (req, res) => {
 app.post("/api/add-teacher", upload.single("image"), async (req, res) => {
     try {
         const { name, floor, branch, directions } = req.body;
-        const imageBuffer = req.file ? req.file.buffer : null;  // Get the image buffer directly from multer
+        const imageBuffer = req.file ? req.file.buffer : null;
 
         if (!name || !floor || !branch || !directions || !imageBuffer) {
             return res.status(400).json({ error: "All fields are required." });
@@ -119,16 +119,20 @@ app.post("/api/add-teacher", upload.single("image"), async (req, res) => {
                 floor,
                 branch,
                 directions,
-                image: imageBuffer  // Store the image as Bytes (binary data)
+                image: imageBuffer  // Store the image as Bytes
             }
         });
 
         res.status(201).json({ message: "Teacher added successfully!" });
     } catch (error) {
         console.error("Error adding teacher:", error);
+        if (error instanceof PrismaClientKnownRequestError) {
+            console.error("Prisma error:", error.meta);
+        }
         res.status(500).json({ error: "Failed to add teacher." });
     }
 });
+
 
 // Endpoint to update teacher details
 app.put("/api/update-teacher/:name", async (req, res) => {
