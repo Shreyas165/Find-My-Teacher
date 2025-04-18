@@ -17,25 +17,9 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/images', express.static(path.join(__dirname, 'public', 'images')));
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.static(__dirname + '/www'));
 
-const storage = multer.diskStorage({
-    destination: async (req, file, cb) => {
-        const dir = path.join(__dirname, "public", "images");
-        try {
-            await fs.mkdir(dir, { recursive: true });
-            cb(null, dir);
-        } catch (err) {
-            console.error("Error creating images directory:", err);
-            cb(err, null);
-        }
-    },
-    filename: (req, file, cb) => {
-        cb(null, `${Date.now()}-${file.originalname}`);
-    },
-});
+// Setup multer for memory storage to directly capture the file buffer
+const storage = multer.memoryStorage();
 
 const upload = multer({
     storage: storage,
@@ -49,34 +33,11 @@ const upload = multer({
     }
 });
 
-const resizeImage = async (req, res, next) => {
-    if (!req.file) {
-        return next();
-    }
-
-    const filePath = req.file.path;
-    const resizedFilePath = filePath.replace(/(\.[\w]+)$/, "-passport$1");
-
-    try {
-        await sharp(filePath)
-            .resize(132, 170, { fit: 'fill' })
-            .toFile(resizedFilePath);
-
-        req.file.path = resizedFilePath;
-        req.file.filename = path.basename(resizedFilePath);
-
-        await fs.unlink(filePath); // Delete the original file after resizing
-        next();
-    } catch (err) {
-        console.error("Error resizing image:", err);
-        res.status(500).json({ error: "Failed to process the uploaded image." });
-    }
-};
-
 app.get("/", (req, res) => {
     res.status(200).send("Welcome to the Teacher Directory API!");
 });
 
+// Endpoint to get all teacher names
 app.get("/api/people", async (req, res) => {
     try {
         const teachers = await prisma.teacher.findMany({
@@ -91,6 +52,7 @@ app.get("/api/people", async (req, res) => {
     }
 });
 
+// Endpoint to get teacher details along with the image
 app.get("/api/directions/:name", async (req, res) => {
     try {
         const teacherName = req.params.name;
@@ -105,7 +67,7 @@ app.get("/api/directions/:name", async (req, res) => {
         }
 
         const imageUrl = teacher.image
-            ? `${req.protocol}://${req.get('host')}${teacher.image}`
+            ? `${req.protocol}://${req.get('host')}/api/teacher-image/${teacherName}`
             : null;
 
         res.status(200).json({
@@ -121,21 +83,33 @@ app.get("/api/directions/:name", async (req, res) => {
     }
 });
 
-app.post("/api/add-teacher", upload.single("image"), resizeImage, async (req, res) => {
-    const { name, floor, branch, directions } = req.body;
-    const image = req.file ? `/images/${req.file.filename}` : null;
-
-    // Log data before processing
-    console.log({
-        name,
-        floor,
-        branch,
-        directions,
-        image,
-    });
-
+// Endpoint to serve image from database as binary data
+app.get("/api/teacher-image/:name", async (req, res) => {
     try {
-        if (!name || !floor || !branch || !directions || !image) {
+        const teacher = await prisma.teacher.findFirst({
+            where: { name: req.params.name },
+            select: { image: true }  // Retrieve the image as Bytes
+        });
+
+        if (!teacher || !teacher.image) {
+            return res.status(404).json({ error: "Image not found." });
+        }
+
+        res.set("Content-Type", "image/png");  // Adjust the MIME type if needed
+        res.send(teacher.image);  // Send the binary image data
+    } catch (error) {
+        console.error("Error fetching image:", error);
+        res.status(500).json({ error: "Failed to fetch image." });
+    }
+});
+
+// Endpoint to add a new teacher with image stored as Bytes in the database
+app.post("/api/add-teacher", upload.single("image"), async (req, res) => {
+    try {
+        const { name, floor, branch, directions } = req.body;
+        const imageBuffer = req.file ? req.file.buffer : null;  // Get the image buffer directly from multer
+
+        if (!name || !floor || !branch || !directions || !imageBuffer) {
             return res.status(400).json({ error: "All fields are required." });
         }
 
@@ -145,23 +119,18 @@ app.post("/api/add-teacher", upload.single("image"), resizeImage, async (req, re
                 floor,
                 branch,
                 directions,
-                image
+                image: imageBuffer  // Store the image as Bytes (binary data)
             }
         });
 
         res.status(201).json({ message: "Teacher added successfully!" });
     } catch (error) {
         console.error("Error adding teacher:", error);
-
-        // Check if error is due to unique constraint violation
-        if (error.code === 'P2002') {
-            return res.status(400).json({ error: "Teacher with this name already exists." });
-        }
-
         res.status(500).json({ error: "Failed to add teacher." });
     }
 });
 
+// Endpoint to update teacher details
 app.put("/api/update-teacher/:name", async (req, res) => {
     try {
         const teacherName = req.params.name;
@@ -186,6 +155,7 @@ app.put("/api/update-teacher/:name", async (req, res) => {
     }
 });
 
+// Endpoint to delete teacher details
 app.delete("/api/delete-teacher/:name", async (req, res) => {
     try {
         const teacherName = req.params.name;
@@ -203,6 +173,7 @@ app.delete("/api/delete-teacher/:name", async (req, res) => {
     }
 });
 
+// Start server
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
 });
