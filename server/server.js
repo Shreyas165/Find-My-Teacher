@@ -149,6 +149,25 @@ app.post("/api/add-teacher", upload.single("image"), async (req, res) => {
         res.status(500).json({ error: "Failed to add teacher." });
     }
 });
+app.get("/api/teacher-image/:name", async (req, res) => {
+    try {
+        const teacher = await prisma.teacher.findFirst({
+            where: { name: req.params.name },
+            select: { image: true }
+        });
+
+        if (!teacher || !teacher.image) {
+            return res.status(404).json({ error: "Image not found." });
+        }
+
+        res.set("Content-Type", "image/png"); // or detect MIME type dynamically if needed
+        res.send(teacher.image);
+    } catch (error) {
+        console.error("Error fetching image:", error);
+        res.status(500).json({ error: "Failed to fetch image." });
+    }
+});
+
 
 
 app.put("/api/update-teacher/:name", async (req, res) => {
