@@ -122,7 +122,7 @@ app.get("/api/directions/:name", async (req, res) => {
 });
 
 // Use memoryStorage instead of saving to disk
-const upload = multer({ storage: multer.memoryStorage() });
+const upload1 = multer({ storage: multer.memoryStorage() });
 
 app.post("/api/add-teacher", upload.single("image"), async (req, res) => {
     try {
