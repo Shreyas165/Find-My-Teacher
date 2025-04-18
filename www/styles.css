@@ -1,39 +1,59 @@
+/* Reset and base styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --primary-color: #007BFF;
+    --primary-hover: #0056b3;
+    --danger-color: #dc3545;
+    --danger-hover: #a71d2a;
+    --text-light: #f2eaea;
+    --text-dark: #333;
+    --background-blur: rgba(255, 255, 255, 0.2);
+    --card-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    --select-bg: rgba(255, 255, 255, 0.95);
+    --select-text: #333;
+    --select-border: #ddd;
+}
+
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Arial, sans-serif;
     background-color: rgba(255, 255, 255, 0.5);
     background-image: url("p2.png");
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
-    filter: 100%;
-    margin: 100px;
-    padding: 0;
-    height: 100vh;
+    background-attachment: fixed;
+    min-height: 100vh;
     display: flex;
-
+    justify-content: center;
+    align-items: center;
+    padding: clamp(10px, 3vw, 20px);
 }
 
 .container {
-    font-size: 20px;
-    width: 50%;
-    padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    align-content: center;
-    justify-content: center;
-    background-color: rgba(255, 255, 255, 0.2);
+    font-size: clamp(16px, 2vw, 20px);
+    width: min(95%, 800px);
+    padding: clamp(15px, 3vw, 30px);
+    background-color: var(--background-blur);
     backdrop-filter: blur(10px);
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    margin-left: 20%;
-    margin-right: 20%;
-    height: 80%;
+    border-radius: 15px;
+    box-shadow: var(--card-shadow);
+    margin: auto;
+    height: auto;
     text-align: center;
+    transition: all 0.3s ease;
 }
 
 h1 {
-    color: #ffffff;
-    margin-bottom: 20px;
+    color: var(--text-light);
+    margin-bottom: clamp(15px, 3vw, 25px);
+    font-size: clamp(24px, 3vw, 32px);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    letter-spacing: 0.5px;
 }
 
 p {
@@ -41,39 +61,66 @@ p {
 }
 
 .form-group {
-    margin: 20px 0;
-
+    margin: clamp(15px, 3vw, 25px) 0;
+    width: 100%;
 }
 
 label {
-    font-size: 18px;
+    font-size: clamp(16px, 1.8vw, 18px);
     display: block;
     margin-bottom: 8px;
-    color: #f2eaea;
+    color: var(--text-light);
+    text-align: left;
+    font-weight: 500;
 }
 
 select,
+input[type="text"],
 input[type="file"] {
     width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    padding: clamp(10px, 2vw, 15px);
+    font-size: clamp(14px, 1.6vw, 16px);
+    border: 2px solid transparent;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+}
+
+select:focus,
+input[type="text"]:focus,
+input[type="file"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
 button {
-    margin-top: 15px;
-    padding: 10px 20px;
-    font-size: 16px;
+    width: 100%;
+    max-width: 300px;
+    margin: 15px auto;
+    padding: clamp(10px, 2vw, 15px) 20px;
+    font-size: clamp(14px, 1.6vw, 16px);
     border: none;
-    border-radius: 5px;
-    background-color: #007BFF;
-    color: #fff;
+    border-radius: 8px;
+    background-color: var(--primary-color);
+    color: white;
     cursor: pointer;
+    transition: all 0.3s ease;
+    display: block;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+button:active {
+    transform: translateY(0);
 }
 
 .lost-button {
@@ -114,52 +161,69 @@ td[contenteditable="true"] {
 }
 
 .message-box {
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #f1f1f1;
-    border-radius: 5px;
+    margin: 20px 0;
+    padding: clamp(15px, 3vw, 25px);
+    background-color: rgba(241, 241, 241, 0.95);
+    border-radius: 10px;
     border: 1px solid #ddd;
     text-align: left;
-    color: #444;
+    color: var(--text-dark);
+    transition: all 0.3s ease;
 }
 
 #directions-display {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
     gap: 15px;
+    animation: fadeIn 0.5s ease;
 }
 
-#directions-display p {
-    flex: 1;
-    margin: 0;
-}
-
-#directions-image-container {
-    max-width: 150px;
-    height: auto;
-}
-
-#directions-display img {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    border: 2px solid #ddd;
-    border-radius: 8px;
-}
-
-#directions-container {
+#directions-content {
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 20px;
+    flex-direction: column;
+    gap: 12px;
 }
 
-#directions-text {
-    flex: 1;
-    word-wrap: break-word;
-    overflow-wrap: break-word;/
+#directions-content p {
+    margin: 5px 0;
+    color: var(--text-dark);
+    font-size: clamp(14px, 1.6vw, 16px);
+    line-height: 1.5;
+}
+
+#directions-image-container img {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    object-fit: contain;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    margin: 10px auto;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+#directions-image-container img:hover {
+    transform: scale(1.05);
+}
+
+/* Loading state */
+.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 #teacher-image {
@@ -168,4 +232,200 @@ td[contenteditable="true"] {
     object-fit: cover;
     border-radius: 5px;
     color: #f1f1f1;
+}
+
+/* Responsive breakpoints */
+@media screen and (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        width: 95%;
+        padding: clamp(15px, 3vw, 20px);
+    }
+
+    button {
+        width: 100%;
+        max-width: none;
+    }
+
+    select,
+    input[type="text"],
+    input[type="file"] {
+        font-size: 16px;
+        /* Prevent zoom on iOS */
+    }
+}
+
+@media screen and (max-width: 480px) {
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        width: 100%;
+        min-height: 100vh;
+        border-radius: 0;
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 22px;
+        margin-bottom: 15px;
+    }
+
+    .form-group {
+        margin: 15px 0;
+    }
+
+    #directions-display {
+        padding: 10px;
+    }
+
+    button {
+        padding: 12px 15px;
+        font-size: 14px;
+    }
+
+    select {
+        font-size: 16px;
+        padding: 10px 30px 10px 10px;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --text-dark: #f1f1f1;
+        --background-blur: rgba(0, 0, 0, 0.7);
+        --select-bg: rgba(255, 255, 255, 0.9);
+        --select-text: #333;
+        --select-border: #666;
+    }
+
+    .container {
+        background-color: var(--background-blur);
+    }
+
+    .message-box {
+        background-color: rgba(30, 30, 30, 0.95);
+        color: var(--text-light);
+        border-color: #444;
+    }
+
+    select,
+    input[type="text"],
+    input[type="file"] {
+        background-color: var(--select-bg);
+        color: var(--select-text);
+    }
+
+    #directions-content p {
+        color: var(--text-light);
+    }
+
+    button {
+        background-color: var(--primary-color);
+    }
+
+    button:hover {
+        background-color: var(--primary-hover);
+    }
+
+    .card {
+        background: rgba(0, 0, 0, 0.6);
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) {
+    button:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    #directions-image-container img:hover {
+        transform: none;
+    }
+}
+
+/* Enhanced Select Styles */
+select {
+    appearance: none;
+    background-color: var(--select-bg);
+    color: var(--select-text);
+    padding: 12px 35px 12px 15px;
+    width: 100%;
+    border: 2px solid var(--select-border);
+    border-radius: 8px;
+    font-size: clamp(16px, 1.8vw, 18px);
+    cursor: pointer;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px top 50%;
+    background-size: 12px auto;
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+}
+
+select:hover {
+    border-color: var(--primary-color);
+}
+
+select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+/* Polymorphic Card Styles */
+.card {
+    background: var(--background-blur);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 15px 0;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--card-shadow);
+}
+
+.card-header {
+    font-size: clamp(18px, 2vw, 22px);
+    color: var(--text-light);
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.card-content {
+    color: var(--text-light);
+    font-size: clamp(14px, 1.6vw, 16px);
+    line-height: 1.6;
+}
+
+/* Teacher Card Specific Styles */
+.teacher-card {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+    text-align: left;
+}
+
+.teacher-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.teacher-image {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    border-radius: 12px;
+    margin: 10px auto;
 }
