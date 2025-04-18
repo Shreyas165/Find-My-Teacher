@@ -1,10 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
     const teacherForm = document.getElementById("teacher-form");
-    const addTeacherEndpoint = "https://find-my-teacher.onrender.com/api/add-teacher";
+    const addTeacherEndpoint = "https://find-my-teacher.onrender.com/api/add-teacher ";
 
     teacherForm.addEventListener("submit", async (event) => {
         event.preventDefault();
-
 
         const name = document.getElementById("teacher-name").value.trim();
         const floor = document.getElementById("teacher-floor").value.trim();
@@ -12,14 +11,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const directions = document.getElementById("teacher-directions").value.trim();
         const imageFile = document.getElementById("teacher-image").files[0];
 
-
         console.log("Submission Details:");
         console.log("Name:", name);
         console.log("Floor:", floor);
-        console.log("branch:", branch);
+        console.log("Branch:", branch);
         console.log("Directions:", directions);
         console.log("Image File:", imageFile);
-
 
         if (!name) {
             console.error("Name is missing or empty");
@@ -32,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
         if (!branch) {
-            console.error("branch is missing or empty");
+            console.error("Branch is missing or empty");
             alert("Please enter the branch number.");
             return;
         }
@@ -47,7 +44,6 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-
         const formData = new FormData();
         formData.append("name", name);
         formData.append("floor", floor);
@@ -55,23 +51,19 @@ document.addEventListener("DOMContentLoaded", () => {
         formData.append("directions", directions);
         formData.append("image", imageFile);
 
-
         for (let [key, value] of formData.entries()) {
             console.log(`FormData - ${key}:`, value);
         }
 
         try {
+            console.log("Attempting to add teacher...");
             const response = await fetch(addTeacherEndpoint, {
                 method: "POST",
                 body: formData,
             });
 
-
             console.log("Response status:", response.status);
-            console.log("Response headers:", response.headers);
-
             const responseData = await response.json();
-
             console.log("Full response data:", responseData);
 
             if (response.ok) {
@@ -80,11 +72,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 window.location.href = "index.html";
             } else {
                 console.error("Error response:", responseData);
-                alert(responseData.error || "Failed to add teacher. Please try again.");
+                alert(`Failed to add teacher: ${responseData.error || 'Unknown error'}`);
             }
         } catch (error) {
             console.error("Fetch error:", error);
-            alert("An error occurred while adding the teacher.");
+            alert(`An error occurred while adding the teacher: ${error.message}`);
         }
     });
 });
