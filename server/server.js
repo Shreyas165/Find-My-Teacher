@@ -17,7 +17,9 @@ fs.mkdir(IMAGES_DIR, { recursive: true }).catch(console.error);
 
 app.use(cors({
     origin: ['https://find-my-teacher.vercel.app', 'http://localhost:3000'],
-    credentials: true
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -64,7 +66,15 @@ const resizeImage = async (req, res, next) => {
 
     try {
         await sharp(filePath)
-            .resize(132, 170, { fit: 'fill' })
+            .resize(300, 400, {
+                fit: 'contain',
+                position: 'center',
+                background: { r: 255, g: 255, b: 255, alpha: 1 },
+                withoutEnlargement: true,
+                quality: 100
+            })
+            .jpeg({ quality: 100, progressive: true })
+            .png({ quality: 100, progressive: true })
             .toFile(resizedFilePath);
 
         req.file.path = resizedFilePath;
@@ -124,14 +134,16 @@ app.get("/api/directions/:name", async (req, res) => {
             return res.status(404).json({ error: "Teacher not found." });
         }
 
-        console.log("Found teacher with image:", teacher); // Debug log
+        console.log("Found teacher with image:", teacher);
 
-        // Construct image URL with localhost
+        // Use the request's protocol and host for the image URL
+        const protocol = req.protocol;
+        const host = req.get('host');
         const imageUrl = teacher.Image
-            ? `http://localhost:${PORT}/api/images/${teacher.Image.id}`
+            ? `${protocol}://${host}/api/images/${teacher.Image.id}`
             : null;
 
-        console.log("Constructed image URL:", imageUrl); // Debug log
+        console.log("Constructed image URL:", imageUrl);
 
         res.status(200).json({
             name: teacher.name,
@@ -239,6 +251,9 @@ app.post("/api/add-teacher", upload.single("image"), resizeImage, async (req, re
             console.error("Error cleaning up file:", cleanupError);
         }
 
+        const protocol = req.protocol;
+        const host = req.get('host');
+
         console.log("Teacher created successfully:", teacher);
         res.status(201).json({
             message: "Teacher added successfully!",
@@ -247,7 +262,7 @@ app.post("/api/add-teacher", upload.single("image"), resizeImage, async (req, re
                 floor: teacher.floor,
                 branch: teacher.branch,
                 directions: teacher.directions,
-                imageUrl: `http://localhost:${PORT}/api/images/${image.id}`
+                imageUrl: `${protocol}://${host}/api/images/${image.id}`
             }
         });
     } catch (error) {
