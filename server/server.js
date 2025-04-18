@@ -121,12 +121,15 @@ app.get("/api/directions/:name", async (req, res) => {
     }
 });
 
-app.post("/api/add-teacher", upload.single("image"), resizeImage, async (req, res) => {
+// Use memoryStorage instead of saving to disk
+const upload = multer({ storage: multer.memoryStorage() });
+
+app.post("/api/add-teacher", upload.single("image"), async (req, res) => {
     try {
         const { name, floor, branch, directions } = req.body;
-        const image = req.file ? `/images/${req.file.filename}` : null;
+        const imageBuffer = req.file ? req.file.buffer : null;
 
-        if (!name || !floor || !branch || !directions || !image) {
+        if (!name || !floor || !branch || !directions || !imageBuffer) {
             return res.status(400).json({ error: "All fields are required." });
         }
 
@@ -136,7 +139,7 @@ app.post("/api/add-teacher", upload.single("image"), resizeImage, async (req, re
                 floor,
                 branch,
                 directions,
-                image
+                image: imageBuffer 
             }
         });
 
@@ -146,6 +149,7 @@ app.post("/api/add-teacher", upload.single("image"), resizeImage, async (req, re
         res.status(500).json({ error: "Failed to add teacher." });
     }
 });
+
 
 app.put("/api/update-teacher/:name", async (req, res) => {
     try {
