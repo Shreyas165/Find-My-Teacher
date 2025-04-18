@@ -106,7 +106,7 @@ app.get("/api/directions/:name", async (req, res) => {
         }
 
         const imageUrl = teacher.image
-            ? `${req.protocol}://${req.get('host')}${teacher.image}`
+           ? `https://${req.get('host')}${teacher.image}`
             : null;
 
         res.status(200).json({
