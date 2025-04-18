@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Teacher</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Add New Teacher</h1>
+
+        <form id="teacher-form" class="form-group">
+            <label for="teacher-name">Name:</label>
+            <input type="text" id="teacher-name" name="name" required>
+
+            <label for="teacher-floor">Floor:</label>
+            <input type="text" id="teacher-floor" name="floor" required>
+
+            <label for="teacher-branch">branch:</label>
+            <input type="text" id="teacher-branch" name="branch" required>
+
+            <label for="teacher-directions">Directions:</label>
+            <input type="text" id="teacher-directions" name="directions" required>
+
+            <label for="teacher-image">Upload Image:</label>
+            <input type="file" id="teacher-image" name="image" accept="image/*" style="width: 50%;" required>
+
+            <button type="submit" id="submit-teacher">Submit</button>
+        </form>
+    </div>
+
+    <script src="add-teacher.js" defer></script>
+</body>
+
+</html>
