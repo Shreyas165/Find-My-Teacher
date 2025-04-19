@@ -20,18 +20,22 @@
 }
 
 body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background-color: rgba(255, 255, 255, 0.5);
-    background-image: url("p2.png");
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-attachment: fixed;
+    font-family: system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+    background-color: #f5f5f5;
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: clamp(10px, 3vw, 20px);
+}
+
+/* Load background image after page load */
+body.bg-loaded {
+    background-image: url("p2.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
 }
 
 .container {
@@ -40,12 +44,14 @@ body {
     padding: clamp(15px, 3vw, 30px);
     background-color: var(--background-blur);
     backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border-radius: 15px;
     box-shadow: var(--card-shadow);
     margin: auto;
     height: auto;
     text-align: center;
     transition: all 0.3s ease;
+    will-change: transform;
 }
 
 h1 {
@@ -61,8 +67,12 @@ p {
 }
 
 .form-group {
-    margin: clamp(15px, 3vw, 25px) 0;
+    position: relative;
+    margin-bottom: 20px;
     width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
+    display: block;
 }
 
 label {
@@ -351,33 +361,83 @@ td[contenteditable="true"] {
     }
 }
 
-/* Enhanced Select Styles */
+/* Remove any select-specific styles */
 select {
-    appearance: none;
-    background-color: var(--select-bg);
-    color: var(--select-text);
-    padding: 12px 35px 12px 15px;
+    display: none;
+    /* Hide any select elements */
+}
+
+/* Search box styles */
+#teacher-search {
     width: 100%;
-    border: 2px solid var(--select-border);
+    padding: 15px;
+    font-size: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
     border-radius: 8px;
-    font-size: clamp(16px, 1.8vw, 18px);
-    cursor: pointer;
-    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-    background-repeat: no-repeat;
-    background-position: right 12px top 50%;
-    background-size: 12px auto;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: var(--text-dark);
+    margin-bottom: 15px;
     transition: all 0.3s ease;
-    margin-bottom: 20px;
+    display: block;
 }
 
-select:hover {
-    border-color: var(--primary-color);
-}
-
-select:focus {
+#teacher-search:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+#teacher-search::placeholder {
+    color: #999;
+}
+
+.search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+}
+
+.search-result-item {
+    padding: 12px 15px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s ease;
+}
+
+.search-result-item:hover {
+    background-color: #f5f5f5;
+}
+
+.search-result-item:last-child {
+    border-bottom: none;
+}
+
+.teacher-name {
+    font-weight: 600;
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.teacher-details {
+    font-size: 14px;
+    color: #666;
+}
+
+.teacher-details .branch {
+    margin-right: 10px;
+}
+
+.teacher-details .floor {
+    color: #888;
 }
 
 /* Polymorphic Card Styles */
@@ -428,4 +488,61 @@ select:focus {
     height: auto;
     border-radius: 12px;
     margin: 10px auto;
+}
+
+/* Optimize image loading */
+img {
+    content-visibility: auto;
+}
+
+/* Loading indicator */
+.loading-indicator {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 15px 30px;
+    border-radius: 8px;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+/* Form validation */
+.error {
+    border-color: var(--danger-color) !important;
+    background-color: rgba(220, 53, 69, 0.1) !important;
+}
+
+.error:focus {
+    box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.25) !important;
+}
+
+/* Disabled button state */
+button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* Optimize form transitions */
+input[type="text"],
+input[type="file"],
+textarea {
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+/* Image preview optimization */
+#image-preview-container img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-top: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#image-preview-container img.loaded {
+    opacity: 1;
 }
