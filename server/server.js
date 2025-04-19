@@ -11,7 +11,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const prisma = new PrismaClient();
 
-// Create persistent images directory
+// Create images directory
 const IMAGES_DIR = path.join(__dirname, 'persistent_images');
 fs.mkdir(IMAGES_DIR, { recursive: true }).catch(console.error);
 
@@ -115,6 +115,36 @@ app.get("/api/people", async (req, res) => {
     } catch (error) {
         console.error("Error fetching teachers:", error);
         res.status(500).json({ error: "Failed to fetch teacher data." });
+    }
+});
+
+app.get("/api/search", async (req, res) => {
+    try {
+        const { query } = req.query;
+        if (!query) {
+            return res.status(400).json({ error: "Search query is required" });
+        }
+
+        const teachers = await prisma.teacher.findMany({
+            where: {
+                name: {
+                    contains: query,
+                    mode: 'insensitive'
+                }
+            },
+            select: {
+                name: true,
+                floor: true,
+                branch: true,
+                directions: true,
+                Image: true
+            }
+        });
+
+        res.status(200).json({ teachers });
+    } catch (error) {
+        console.error("Error searching teachers:", error);
+        res.status(500).json({ error: "Failed to search teachers" });
     }
 });
 
