@@ -20,22 +20,18 @@
 }
 
 body {
-    font-family: system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
-    background-color: #f5f5f5;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: clamp(10px, 3vw, 20px);
-}
-
-/* Load background image after page load */
-body.bg-loaded {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background-color: rgba(255, 255, 255, 0.5);
     background-image: url("p2.png");
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
     background-attachment: fixed;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: clamp(10px, 3vw, 20px);
 }
 
 .container {
@@ -44,14 +40,12 @@ body.bg-loaded {
     padding: clamp(15px, 3vw, 30px);
     background-color: var(--background-blur);
     backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
     border-radius: 15px;
     box-shadow: var(--card-shadow);
     margin: auto;
     height: auto;
     text-align: center;
     transition: all 0.3s ease;
-    will-change: transform;
 }
 
 h1 {
@@ -67,12 +61,8 @@ p {
 }
 
 .form-group {
-    position: relative;
-    margin-bottom: 20px;
+    margin: clamp(15px, 3vw, 25px) 0;
     width: 100%;
-    max-width: 600px;
-    margin: 20px auto;
-    display: block;
 }
 
 label {
@@ -371,61 +361,41 @@ select {
 #teacher-search {
     width: 100%;
     padding: 15px;
-    font-size: 16px;
-    border: 2px solid rgba(0, 0, 0, 0.1);
+    font-size: 18px;
+    border: 2px solid #ddd;
     border-radius: 8px;
-    background-color: rgba(255, 255, 255, 0.95);
-    color: #000000;
-    margin-bottom: 15px;
+    background-color: white;
+    margin-bottom: 10px;
     transition: all 0.3s ease;
-    display: block;
-    caret-color: var(--primary-color);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 #teacher-search:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-    animation: cursor-blink 1s infinite;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
 }
 
 #teacher-search::placeholder {
-    color: #666;
-}
-
-@keyframes cursor-blink {
-
-    0%,
-    100% {
-        caret-color: transparent;
-    }
-
-    50% {
-        caret-color: var(--primary-color);
-    }
-}
-
-/* Make sure all text inputs have black text */
-input[type="text"] {
-    color: #000000;
+    color: #999;
+    font-size: 16px;
 }
 
 .search-results {
     position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
     max-height: 300px;
     overflow-y: auto;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     z-index: 1000;
     display: none;
 }
 
 .search-result-item {
-    padding: 12px 15px;
+    padding: 12px;
     cursor: pointer;
     border-bottom: 1px solid #eee;
     transition: background-color 0.2s ease;
@@ -457,6 +427,13 @@ input[type="text"] {
 
 .teacher-details .floor {
     color: #888;
+}
+
+.form-group {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
 }
 
 /* Polymorphic Card Styles */
@@ -507,61 +484,5 @@ input[type="text"] {
     height: auto;
     border-radius: 12px;
     margin: 10px auto;
-}
 
-/* Optimize image loading */
-img {
-    content-visibility: auto;
-}
-
-/* Loading indicator */
-.loading-indicator {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 15px 30px;
-    border-radius: 8px;
-    z-index: 1000;
-    animation: fadeIn 0.3s ease;
-}
-
-/* Form validation */
-.error {
-    border-color: var(--danger-color) !important;
-    background-color: rgba(220, 53, 69, 0.1) !important;
-}
-
-.error:focus {
-    box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.25) !important;
-}
-
-/* Disabled button state */
-button:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-    transform: none !important;
-}
-
-/* Optimize form transitions */
-input[type="text"],
-input[type="file"],
-textarea {
-    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
-}
-
-/* Image preview optimization */
-#image-preview-container img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-    margin-top: 10px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-#image-preview-container img.loaded {
-    opacity: 1;
 }
