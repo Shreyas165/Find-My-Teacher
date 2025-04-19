@@ -372,23 +372,42 @@ select {
     width: 100%;
     padding: 15px;
     font-size: 16px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    border: 2px solid rgba(0, 0, 0, 0.1);
     border-radius: 8px;
-    background-color: rgba(255, 255, 255, 0.9);
-    color: var(--text-dark);
+    background-color: rgba(255, 255, 255, 0.95);
+    color: #000000;
     margin-bottom: 15px;
     transition: all 0.3s ease;
     display: block;
+    caret-color: var(--primary-color);
 }
 
 #teacher-search:focus {
     outline: none;
     border-color: var(--primary-color);
     box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+    animation: cursor-blink 1s infinite;
 }
 
 #teacher-search::placeholder {
-    color: #999;
+    color: #666;
+}
+
+@keyframes cursor-blink {
+
+    0%,
+    100% {
+        caret-color: transparent;
+    }
+
+    50% {
+        caret-color: var(--primary-color);
+    }
+}
+
+/* Make sure all text inputs have black text */
+input[type="text"] {
+    color: #000000;
 }
 
 .search-results {
