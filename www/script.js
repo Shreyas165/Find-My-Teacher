@@ -1,140 +1,294 @@
-const teacherSelect = document.getElementById("teacher-select");
-const getDirectionsButton = document.getElementById("get-directions");
-const directionsDisplay = document.getElementById("directions-display");
-const addTeacherBtn = document.getElementById("add-teacher-btn");
-const submitTeacherButton = document.getElementById("submit-teacher");
-const addTeacherForm = document.getElementById("add-teacher-form");
+// Defer background image loading
+document.addEventListener('DOMContentLoaded', () => {
+    // Load background image after page content
+    const bgImage = new Image();
+    bgImage.src = 'p2.png';
+    bgImage.onload = () => document.body.classList.add('bg-loaded');
+});
 
-const getTeachersEndpoint = "https://find-my-teacher.onrender.com/api/people";
-const getDirectionsEndpoint = "https://find-my-teacher.onrender.com/api/directions/";
-const addTeacherEndpoint = "https://find-my-teacher.onrender.com/api/add-teacher";
+// Cache DOM elements
+const elements = {
+    teacherSearch: document.getElementById("teacher-search"),
+    searchResults: document.getElementById("search-results"),
+    getDirectionsButton: document.getElementById("get-directions"),
+    directionsDisplay: document.getElementById("directions-display"),
+    addTeacherBtn: document.getElementById("add-teacher-btn"),
+    submitTeacherButton: document.getElementById("submit-teacher"),
+    addTeacherForm: document.getElementById("add-teacher-form"),
+    branchText: document.getElementById("branch-text"),
+    floorText: document.getElementById("floor-text"),
+    directionsText: document.getElementById("directions-text-content")
+};
 
-async function loadTeachers() {
-    try {
-        console.log("Attempting to fetch teachers from:", getTeachersEndpoint);
-        const response = await fetch(getTeachersEndpoint);
-        console.log("Response status:", response.status);
+// API endpoints
+const API = {
+    search: "https://find-my-teacher.onrender.com/api/people",
+    directions: "https://find-my-teacher.onrender.com/api/directions/",
+    addTeacher: "https://find-my-teacher.onrender.com/api/add-teacher"
+};
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+// State management
+let state = {
+    selectedTeacher: null,
+    searchTimeout: null,
+    cachedResults: new Map()
+};
+
+// Debounce function
+const debounce = (func, wait) => {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+};
+
+// Search functionality
+if (elements.teacherSearch && elements.searchResults) {
+    async function searchTeachers(query) {
+        try {
+            // Check cache first
+            if (state.cachedResults.has(query)) {
+                displaySearchResults(state.cachedResults.get(query));
+                return;
+            }
+
+            const response = await fetch(`${API.search}?query=${encodeURIComponent(query)}`);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+            const data = await response.json();
+            // Cache the results
+            state.cachedResults.set(query, data.teachers);
+            displaySearchResults(data.teachers);
+        } catch (error) {
+            console.error("Error searching teachers:", error);
+            elements.searchResults.innerHTML = '<div class="search-result-item">Error searching teachers</div>';
+            elements.searchResults.style.display = 'block';
         }
+    }
 
-        const data = await response.json();
-        console.log("Received data:", data);
+    function displaySearchResults(teachers) {
+        elements.searchResults.innerHTML = '';
 
-        if (data.teachers && Array.isArray(data.teachers)) {
-            teacherSelect.innerHTML = '<option value="" disabled selected>Select a teacher</option>';
-            data.teachers.forEach((teacher) => {
-                const option = document.createElement("option");
-                option.value = teacher.name;
-                option.textContent = teacher.name;
-                teacherSelect.appendChild(option);
+        if (!teachers.length) {
+            elements.searchResults.innerHTML = '<div class="search-result-item">No teachers found</div>';
+        } else {
+            const fragment = document.createDocumentFragment();
+            teachers.forEach(teacher => {
+                const div = document.createElement('div');
+                div.className = 'search-result-item';
+                div.innerHTML = `
+                    <div class="teacher-name">${teacher.name}</div>
+                    <div class="teacher-details">
+                        <span class="branch">${teacher.branch}</span>
+                        <span class="floor">Floor ${teacher.floor}</span>
+                    </div>
+                `;
+                div.addEventListener('click', () => {
+                    state.selectedTeacher = teacher;
+                    elements.teacherSearch.value = teacher.name;
+                    elements.searchResults.style.display = 'none';
+                });
+                fragment.appendChild(div);
             });
-            console.log("Teachers loaded successfully");
-        } else {
-            console.error("Invalid data format received:", data);
-            alert("Failed to load teachers. Invalid response from the server.");
+            elements.searchResults.appendChild(fragment);
         }
-    } catch (error) {
-        console.error("Error loading teachers:", error);
-        alert(`Failed to load teachers. Error: ${error.message}`);
+
+        elements.searchResults.style.display = 'block';
     }
+
+    // Optimized event handlers
+    elements.teacherSearch.addEventListener('input', debounce((e) => {
+        const query = e.target.value.trim();
+        if (query.length < 2) {
+            elements.searchResults.style.display = 'none';
+            state.selectedTeacher = null;
+            return;
+        }
+        searchTeachers(query);
+    }, 300));
+
+    elements.teacherSearch.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && state.selectedTeacher) {
+            getDirections();
+        }
+    });
+
+    // Use event delegation for document click
+    document.addEventListener('click', (e) => {
+        if (!elements.teacherSearch.contains(e.target) && !elements.searchResults.contains(e.target)) {
+            elements.searchResults.style.display = 'none';
+        }
+    });
 }
 
-async function getDirections() {
-    const teacherName = teacherSelect.value;
+// Get directions functionality
+if (elements.getDirectionsButton && elements.directionsDisplay) {
+    async function getDirections() {
+        if (!state.selectedTeacher) {
+            alert("Please select a teacher from the search results.");
+            return;
+        }
 
-    if (!teacherName) {
-        alert("Please select a teacher.");
-        return;
-    }
+        try {
+            const response = await fetch(`${API.directions}${encodeURIComponent(state.selectedTeacher.name)}`);
+            const data = await response.json();
 
-    try {
-        const response = await fetch(`${getDirectionsEndpoint}${encodeURIComponent(teacherName)}`);
-        const data = await response.json();
+            if (data.error) {
+                elements.directionsDisplay.innerHTML = `<p>${data.error}</p>`;
+            } else {
+                elements.branchText.textContent = data.branch;
+                elements.floorText.textContent = data.floor;
+                elements.directionsText.textContent = data.directions;
 
-        if (data.error) {
-            directionsDisplay.innerHTML = `<p>${data.error}</p>`;
-        } else {
-            console.log("Received teacher data:", data); // Debug log
-            directionsDisplay.innerHTML = `
-                <p><strong>Branch:</strong> ${data.branch}</p>
-                <p><strong>Floor:</strong> ${data.floor}</p>
-                <p><strong>Directions:</strong> ${data.directions}</p>
-                ${data.imageUrl
-                    ? `<img src="${data.imageUrl}" alt="${teacherName}" style="max-width: 200px; height: auto; margin-top: 10px;">`
-                    : "<p>No image available</p>"
+                if (data.imageUrl) {
+                    const img = new Image();
+                    img.src = data.imageUrl;
+                    img.alt = state.selectedTeacher.name;
+                    img.style = "max-width: 200px; height: auto; margin-top: 10px;";
+                    img.loading = "lazy";
+                    document.getElementById("directions-image-container").appendChild(img);
                 }
-            `;
-        }
+            }
 
-        directionsDisplay.style.display = "block";
-    } catch (error) {
-        console.error("Error fetching directions:", error);
-        alert("Failed to fetch directions. Please try again.");
+            elements.directionsDisplay.style.display = "block";
+        } catch (error) {
+            console.error("Error fetching directions:", error);
+            alert("Failed to fetch directions. Please try again.");
+        }
     }
+
+    elements.getDirectionsButton.addEventListener('click', getDirections);
 }
 
-addTeacherBtn.addEventListener("click", () => {
-    window.location.href = "add-teacher.html";
-});
+// Add teacher functionality
+if (elements.addTeacherBtn) {
+    elements.addTeacherBtn.addEventListener("click", () => {
+        window.location.href = "add-teacher.html";
+    });
+}
 
-submitTeacherButton.addEventListener("click", async (event) => {
-    event.preventDefault();
+if (elements.submitTeacherButton && elements.addTeacherForm) {
+    // Create loading indicator
+    const createLoadingIndicator = () => {
+        const loader = document.createElement('div');
+        loader.className = 'loading-indicator';
+        loader.innerHTML = 'Adding teacher...';
+        return loader;
+    };
 
-    const name = document.getElementById("teacher-name").value;
-    const floor = document.getElementById("teacher-floor").value;
-    const branch = document.getElementById("teacher-branch").value;
-    const directions = document.getElementById("teacher-directions").value;
-    const image = document.getElementById("teacher-image").files[0];
+    // Optimize image before upload
+    const optimizeImage = async (file) => {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
 
-    if (!name || !floor || !branch || !directions || !image) {
-        alert("Please fill in all the fields and upload an image.");
-        return;
-    }
+                    // Set maximum dimensions
+                    const MAX_WIDTH = 800;
+                    const MAX_HEIGHT = 600;
 
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("floor", floor);
-    formData.append("branch", branch);
-    formData.append("directions", directions);
-    formData.append("image", image);
+                    let width = img.width;
+                    let height = img.height;
 
-    try {
-        console.log("Attempting to add teacher...");
-        const response = await fetch(addTeacherEndpoint, {
-            method: "POST",
-            body: formData,
+                    // Calculate new dimensions
+                    if (width > height) {
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+                    } else {
+                        if (height > MAX_HEIGHT) {
+                            width *= MAX_HEIGHT / height;
+                            height = MAX_HEIGHT;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+
+                    // Draw and compress image
+                    ctx.drawImage(img, 0, 0, width, height);
+                    canvas.toBlob(resolve, 'image/jpeg', 0.8);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
         });
+    };
 
-        console.log("Response status:", response.status);
-        const responseData = await response.json();
-        console.log("Response data:", responseData);
+    elements.submitTeacherButton.addEventListener("click", async (event) => {
+        event.preventDefault();
 
-        if (response.ok) {
-            alert("Teacher added successfully!");
-            window.location.href = "index.html";
-        } else {
-            console.error("Error response:", responseData);
-            alert(`Failed to add teacher: ${responseData.error || 'Unknown error'}`);
+        // Disable submit button and show loading
+        elements.submitTeacherButton.disabled = true;
+        const loadingIndicator = createLoadingIndicator();
+        elements.addTeacherForm.appendChild(loadingIndicator);
+
+        try {
+            const formData = new FormData();
+            let hasError = false;
+
+            // Gather form data
+            ['name', 'floor', 'branch', 'directions'].forEach(field => {
+                const value = document.getElementById(`teacher-${field}`).value.trim();
+                if (!value) {
+                    hasError = true;
+                    document.getElementById(`teacher-${field}`).classList.add('error');
+                }
+                formData.append(field, value);
+            });
+
+            const imageFile = document.getElementById("teacher-image").files[0];
+            if (!imageFile) {
+                hasError = true;
+                document.getElementById("teacher-image").classList.add('error');
+            }
+
+            if (hasError) {
+                throw new Error("Please fill in all required fields");
+            }
+
+            // Optimize image before upload
+            const optimizedImage = await optimizeImage(imageFile);
+            formData.append("image", optimizedImage, imageFile.name);
+
+            const response = await fetch(API.addTeacher, {
+                method: "POST",
+                body: formData
+            });
+
+            if (response.ok) {
+                alert("Teacher added successfully!");
+                window.location.href = "index.html";
+            } else {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to add teacher');
+            }
+        } catch (error) {
+            console.error("Error adding teacher:", error);
+            alert(error.message);
+        } finally {
+            // Remove loading indicator and re-enable submit button
+            elements.addTeacherForm.removeChild(loadingIndicator);
+            elements.submitTeacherButton.disabled = false;
         }
-    } catch (error) {
-        console.error("Error adding teacher:", error);
-        alert(`An error occurred while adding the teacher: ${error.message}`);
-    }
-});
+    });
 
-// Initialize the page
-document.addEventListener("DOMContentLoaded", () => {
-    loadTeachers();
-
-    if (getDirectionsButton) {
-        getDirectionsButton.addEventListener("click", getDirections);
-    }
-
-    if (addTeacherBtn) {
-        addTeacherBtn.addEventListener("click", () => {
-            window.location.href = "add-teacher.html";
-        });
-    }
-});
+    // Clear error styling on input
+    ['name', 'floor', 'branch', 'directions', 'image'].forEach(field => {
+        const element = document.getElementById(`teacher-${field}`);
+        if (element) {
+            element.addEventListener('input', () => {
+                element.classList.remove('error');
+            });
+        }
+    });
+}
