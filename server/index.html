@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Find Teacher's branch</title>
+    <meta name="description" content="Find your teacher's cabin location quickly and easily">
     <link rel="stylesheet" href="styles.css">
+    <link rel="preload" href="p2.png" as="image">
 </head>
 
 <body>
@@ -13,27 +15,25 @@
         <h1>Find Your Teacher's Cabin</h1>
 
         <div class="form-group">
-            <label for="teacher-select">Select a Teacher</label>
-            <select id="teacher-select">
-                <option value="" disabled selected>Loading...</option>
-            </select>
+            <label for="teacher-search">Search for a Teacher</label>
+            <input type="text" id="teacher-search" placeholder="Type teacher's name..." autocomplete="off">
+            <div id="search-results" class="search-results"></div>
         </div>
 
-        <button id="get-directions">Get Directions</button>
+        <button id="get-directions">GET DIRECTIONS</button>
+        <button id="add-teacher-btn">ADD TEACHER</button>
 
         <div id="directions-display" class="message-box" style="display: none;">
             <div id="directions-text">
                 <div id="directions-image-container">
                     <div id="directions-content">
-                        <p><strong>Branch:</strong> Example branch</p>
-                        <p><strong>Floor:</strong> 2nd Floor</p>
-                        <p><strong>Directions:</strong> Follow the signs to the left...</p>
+                        <p><strong>Branch:</strong> <span id="branch-text"></span></p>
+                        <p><strong>Floor:</strong> <span id="floor-text"></span></p>
+                        <p><strong>Directions:</strong> <span id="directions-text-content"></span></p>
                     </div>
                 </div>
             </div>
         </div>
-
-        <button id="add-teacher-btn">Add Teacher</button>
 
         <div id="add-teacher-form" class="form-group" style="display: none;">
             <h2>Add New Teacher</h2>
@@ -43,11 +43,11 @@
             <label for="teacher-floor">Floor:</label>
             <input type="text" id="teacher-floor" required>
 
-            <label for="teacher-branch">branch:</label>
+            <label for="teacher-branch">Branch:</label>
             <input type="text" id="teacher-branch" required>
 
             <label for="teacher-directions">Directions:</label>
-            <input type="text" id="teacher-directions" required>
+            <textarea id="teacher-directions" required></textarea>
 
             <label for="teacher-image">Upload Image:</label>
             <input type="file" id="teacher-image" accept="image/*">
@@ -58,7 +58,7 @@
 
     <div id="image-preview-container"></div>
 
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
 </body>
 
 </html>
