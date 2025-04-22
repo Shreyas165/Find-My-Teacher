@@ -195,7 +195,12 @@ if (elements.getDirectionsButton && elements.directionsDisplay) {
 // Add teacher functionality
 if (elements.addTeacherBtn) {
     elements.addTeacherBtn.addEventListener("click", () => {
-        window.location.href = "add-teacher.html";
+        const password = prompt("Please enter the admin password:");
+        if (password === "admin123") {
+            window.location.href = "add-teacher.html";
+        } else {
+            alert("Incorrect password. Please try again.");
+        }
     });
 }
 
