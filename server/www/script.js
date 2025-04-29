@@ -109,6 +109,10 @@ if (elements.teacherSearch && elements.searchResults) {
                     highlightedName = `${before}<strong>${match}</strong>${after}`;
                 }
 
+                
+                const branchDisplay = teacher.branch ? teacher.branch : '';
+                const floorDisplay = teacher.floor ? `Floor ${teacher.floor}` : '';
+
                 div.innerHTML = `
                     <div class="teacher-name">${highlightedName}</div>
                     <div class="teacher-details">
