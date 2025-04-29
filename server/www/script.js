@@ -17,10 +17,13 @@ const elements = {
     addTeacherForm: document.getElementById("add-teacher-form"),
     branchText: document.getElementById("branch-text"),
     floorText: document.getElementById("floor-text"),
-    directionsText: document.getElementById("directions-text-content")
+    directionsText: document.getElementById("directions-text-content"),
+    aboutBtn: document.getElementById("about-btn"),              // Add this line
+    aboutDisplay: document.getElementById("about-display")
 };
 
 // API endpoints
+// API endpoints for local development
 const API = {
     search: "https://find-my-teacher.onrender.com/api/people",
     directions: "https://find-my-teacher.onrender.com/api/directions/",
@@ -323,4 +326,21 @@ if (elements.submitTeacherButton && elements.addTeacherForm) {
             });
         }
     });
+    // About button functionality
+    if (elements.aboutBtn && elements.aboutDisplay) {
+        elements.aboutBtn.addEventListener("click", () => {
+            // Hide other displays
+            elements.directionsDisplay.style.display = "none";
+            elements.addTeacherForm.style.display = "none";
+
+            // Toggle about display
+            if (elements.aboutDisplay.style.display === "block") {
+                elements.aboutDisplay.style.display = "none";
+            } else {
+                elements.aboutDisplay.style.display = "block";
+            }
+        });
+    }
+
 }
+
