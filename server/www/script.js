@@ -18,12 +18,11 @@ const elements = {
     branchText: document.getElementById("branch-text"),
     floorText: document.getElementById("floor-text"),
     directionsText: document.getElementById("directions-text-content"),
-    aboutBtn: document.getElementById("about-btn"),              // Add this line
+    aboutBtn: document.getElementById("about-btn"),              
     aboutDisplay: document.getElementById("about-display")
 };
 
 // API endpoints
-// API endpoints for local development
 const API = {
     search: "https://find-my-teacher.onrender.com/api/people",
     directions: "https://find-my-teacher.onrender.com/api/directions/",
@@ -110,13 +109,7 @@ if (elements.teacherSearch && elements.searchResults) {
                     highlightedName = `${before}<strong>${match}</strong>${after}`;
                 }
 
-                div.innerHTML = `
-                    <div class="teacher-name">${highlightedName}</div>
-                    <div class="teacher-details">
-                        <span class="branch">${teacher.branch}</span>
-                        <span class="floor">Floor ${teacher.floor}</span>
-                    </div>
-                `;
+                
 
                 div.addEventListener('click', () => {
                     state.selectedTeacher = teacher;
