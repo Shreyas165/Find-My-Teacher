@@ -116,8 +116,8 @@ if (elements.teacherSearch && elements.searchResults) {
                 div.innerHTML = `
                     <div class="teacher-name">${highlightedName}</div>
                     <div class="teacher-details">
-                        <span class="branch">${click}</span>
-                        <span class="floor">Floor ${click}</span>
+                        <span class="branch">${teacher.branch}</span>
+                        <span class="floor">Floor ${teacher.floor}</span>
                     </div>
                 `;
                 
