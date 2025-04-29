@@ -1,12 +1,12 @@
-// Defer background image loading
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Load background image after page content
+    
     const bgImage = new Image();
     bgImage.src = 'p2.png';
     bgImage.onload = () => document.body.classList.add('bg-loaded');
 });
 
-// Cache DOM elements
+
 const elements = {
     teacherSearch: document.getElementById("teacher-search"),
     searchResults: document.getElementById("search-results"),
@@ -116,8 +116,8 @@ if (elements.teacherSearch && elements.searchResults) {
                 div.innerHTML = `
                     <div class="teacher-name">${highlightedName}</div>
                     <div class="teacher-details">
-                        <span class="branch">${teacher.branch}</span>
-                        <span class="floor">Floor ${teacher.floor}</span>
+                        <span class="branch">${click}</span>
+                        <span class="floor">Floor ${click}</span>
                     </div>
                 `;
                 
