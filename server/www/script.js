@@ -109,6 +109,10 @@ if (elements.teacherSearch && elements.searchResults) {
                     highlightedName = `${before}<strong>${match}</strong>${after}`;
                 }
 
+                div.innerHTML = `
+                    <div class="teacher-name">${highlightedName}</div>
+                    
+                `;
                 
 
                 div.addEventListener('click', () => {
