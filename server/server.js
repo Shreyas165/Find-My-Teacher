@@ -66,15 +66,15 @@ const resizeImage = async (req, res, next) => {
 
     try {
         await sharp(filePath)
-            .resize(300, 400, {
+            .resize(200, 267, {
                 fit: 'contain',
                 position: 'center',
                 background: { r: 255, g: 255, b: 255, alpha: 1 },
                 withoutEnlargement: true,
-                quality: 100
+                quality: 90
             })
-            .jpeg({ quality: 100, progressive: true })
-            .png({ quality: 100, progressive: true })
+            .jpeg({ quality: 90, progressive: true })
+            .png({ quality: 90, progressive: true })
             .toFile(resizedFilePath);
 
         req.file.path = resizedFilePath;
