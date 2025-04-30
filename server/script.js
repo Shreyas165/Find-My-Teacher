@@ -119,7 +119,7 @@ if (elements.teacherSearch && elements.searchResults) {
                     state.selectedTeacher = teacher;
                     elements.teacherSearch.value = teacher.name;
                     elements.searchResults.style.display = 'none';
-                    elements.directionsDisplay.style.display = 'none';
+                  
                 });
                 fragment.appendChild(div);
             });
@@ -154,61 +154,82 @@ if (elements.teacherSearch && elements.searchResults) {
     });
 }
 
-// Get directions functionality
-async function getDirections() {
-    if (!state.selectedTeacher) {
-        alert("Please select a teacher from the search results.");
-        return;
+if (elements.getDirectionsButton && elements.directionsDisplay) {
+    async function getDirections() {
+        if (!state.selectedTeacher) {
+            alert("Please select a teacher from the search results.");
+            return;
+        }
+
+        try {
+            // Store the selected teacher in sessionStorage before reloading
+            sessionStorage.setItem('selectedTeacher', JSON.stringify(state.selectedTeacher));
+            
+            // Reload the page immediately
+            window.location.reload();
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Failed to process request. Please try again.");
+        }
     }
 
-    try {
-        // Clear previous content while loading new data
-        elements.directionsDisplay.innerHTML = `
-            <div id="directions-content">
-                <p><strong>Branch:</strong> <span id="branch-text"></span></p>
-                <p><strong>Floor:</strong> <span id="floor-text"></span></p>
-                <p><strong>Directions:</strong></p>
-                <p id="directions-text-content"></p>
-                <div id="directions-image-container"></div>
-            </div>
-            <p class="loading-message">Loading directions...</p>
-        `;
+    elements.getDirectionsButton.addEventListener('click', getDirections);
+}
 
+// Add this code to handle the reload and show directions automatically
+document.addEventListener('DOMContentLoaded', () => {
+    // Check if we have a stored teacher from a reload
+    const storedTeacher = sessionStorage.getItem('selectedTeacher');
+    if (storedTeacher) {
+        try {
+            // Parse the stored teacher data
+            state.selectedTeacher = JSON.parse(storedTeacher);
+            
+            // Clear the storage so it doesn't keep reloading
+            sessionStorage.removeItem('selectedTeacher');
+            
+            // Set the search field value
+            if (elements.teacherSearch) {
+                elements.teacherSearch.value = state.selectedTeacher.name;
+            }
+            
+            // Fetch and display directions
+            fetchAndDisplayDirections();
+        } catch (error) {
+            console.error("Error processing stored teacher:", error);
+        }
+    }
+});
+
+// Separate function to fetch and display directions
+async function fetchAndDisplayDirections() {
+    if (!state.selectedTeacher) return;
+
+    try {
         const response = await fetch(`${API.directions}${encodeURIComponent(state.selectedTeacher.name)}`);
         const data = await response.json();
 
-        // Get fresh references to the elements after clearing
-        const branchText = document.getElementById("branch-text");
-        const floorText = document.getElementById("floor-text");
-        const directionsText = document.getElementById("directions-text-content");
-        const imageContainer = document.getElementById("directions-image-container");
-
-        // Remove loading message
-        document.querySelector('.loading-message').remove();
-
         if (data.error) {
-            directionsText.textContent = data.error;
+            elements.directionsDisplay.innerHTML = `<p>${data.error}</p>`;
         } else {
-            branchText.textContent = data.branch;
-            floorText.textContent = `Floor ${data.floor}`;
-            directionsText.textContent = data.directions;
+            elements.branchText.textContent = data.branch;
+            elements.floorText.textContent = data.floor;
+            elements.directionsText.textContent = data.directions;
 
             if (data.imageUrl) {
-                imageContainer.innerHTML = ''; // Clear any previous image
                 const img = new Image();
                 img.src = data.imageUrl;
-                img.alt = `Location of ${state.selectedTeacher.name}`;
+                img.alt = state.selectedTeacher.name;
                 img.style = "max-width: 200px; height: auto; margin-top: 10px;";
                 img.loading = "lazy";
-                imageContainer.appendChild(img);
+                document.getElementById("directions-image-container").appendChild(img);
             }
         }
 
         elements.directionsDisplay.style.display = "block";
     } catch (error) {
         console.error("Error fetching directions:", error);
-        elements.directionsDisplay.innerHTML = `<p>Failed to fetch directions. Please try again.</p>`;
-        elements.directionsDisplay.style.display = "block";
+        alert("Failed to fetch directions. Please try again.");
     }
 }
 
