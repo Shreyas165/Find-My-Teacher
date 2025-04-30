@@ -32,6 +32,7 @@ body {
     justify-content: center;
     align-items: center;
     padding: clamp(10px, 3vw, 20px);
+    -webkit-overflow-scrolling: touch;
 }
 
 .container {
@@ -242,12 +243,16 @@ td[contenteditable="true"] {
 
     .container {
         width: 95%;
-        padding: clamp(15px, 3vw, 20px);
+        padding: 15px;
+        margin: 10px auto;
     }
 
     button {
         width: 100%;
         max-width: none;
+        padding: 12px;
+        font-size: 14px;
+        margin: 8px 0;
     }
 
     select,
@@ -255,6 +260,55 @@ td[contenteditable="true"] {
     input[type="file"] {
         font-size: 16px;
         /* Prevent zoom on iOS */
+    }
+
+    .teacher-info-container {
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .info-item {
+        padding: 12px;
+        font-size: 14px;
+    }
+
+    .teacher-image {
+        max-width: 100%;
+        height: auto;
+        margin: 10px 0;
+    }
+
+    h1 {
+        font-size: 24px;
+        margin-bottom: 15px;
+    }
+
+    .message-box {
+        padding: 15px;
+        margin: 10px 0;
+    }
+
+    .author-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .author {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    #teacher-search {
+        font-size: 16px;
+        padding: 12px;
+    }
+
+    .search-results {
+        font-size: 14px;
+    }
+
+    .search-result-item {
+        padding: 10px;
     }
 }
 
@@ -268,7 +322,8 @@ td[contenteditable="true"] {
         width: 100%;
         min-height: 100vh;
         border-radius: 0;
-        padding: 15px;
+        padding: 10px;
+        margin: 0;
     }
 
     h1 {
@@ -284,9 +339,22 @@ td[contenteditable="true"] {
         padding: 10px;
     }
 
+    .info-item {
+        padding: 10px;
+        font-size: 13px;
+    }
+
+    .teacher-info-container {
+        padding: 8px;
+    }
+
     button {
-        padding: 12px 15px;
-        font-size: 14px;
+        width: 100%;
+        margin: 5px 0;
+    }
+
+    .institute-logo {
+        max-width: 200px;
     }
 
     select {
@@ -505,8 +573,10 @@ select {
 #about-display {
     margin-top: 20px;
     padding: 20px;
-    background-color: #000; /* Black background */
-    color: #fff; /* White text */
+    background-color: #000;
+    /* Black background */
+    color: #fff;
+    /* White text */
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
 }
@@ -525,8 +595,10 @@ select {
     width: 45%;
     margin-bottom: 20px;
     padding: 15px;
-    background-color: #222; /* Dark gray for author cards */
-    color: #fff; /* White text */
+    background-color: #222;
+    /* Dark gray for author cards */
+    color: #fff;
+    /* White text */
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1);
     transition: transform 0.3s ease;
@@ -542,7 +614,8 @@ select {
     border-radius: 50%;
     object-fit: cover;
     margin-bottom: 15px;
-    border: 3px solid #fff; /* Changed to white border */
+    border: 3px solid #fff;
+    /* Changed to white border */
 }
 
 .author-info {
@@ -550,7 +623,8 @@ select {
 }
 
 .author-info h3 {
-    color: #fff; /* Changed to white */
+    color: #fff;
+    /* Changed to white */
     margin-bottom: 8px;
 }
 
@@ -568,11 +642,12 @@ select {
         background-color: #111;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     }
-    
+
     .author {
         background-color: #333;
     }
 }
+
 .social-links {
     display: flex;
     color: white;
@@ -591,4 +666,63 @@ select {
 
 .social-icon:hover {
     transform: scale(1.2);
+}
+
+.teacher-info-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.info-item {
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    margin-bottom: 10px;
+    color: white;
+}
+
+.info-item strong {
+    color: var(--primary-color);
+    margin-right: 8px;
+}
+
+.teacher-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin-top: 20px;
+    transition: transform 0.3s ease;
+}
+
+.teacher-image:hover {
+    transform: scale(1.02);
+}
+
+/* Prevent text zoom on mobile */
+input,
+select,
+textarea {
+    font-size: 16px !important;
+}
+
+/* Improve touch targets */
+button,
+.search-result-item {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Improve mobile form input */
+input[type="text"] {
+    -webkit-appearance: none;
+    border-radius: 8px;
 }
