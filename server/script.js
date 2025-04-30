@@ -154,42 +154,61 @@ if (elements.teacherSearch && elements.searchResults) {
 }
 
 // Get directions functionality
-if (elements.getDirectionsButton && elements.directionsDisplay) {
-    async function getDirections() {
-        if (!state.selectedTeacher) {
-            alert("Please select a teacher from the search results.");
-            return;
-        }
-
-        try {
-            const response = await fetch(`${API.directions}${encodeURIComponent(state.selectedTeacher.name)}`);
-            const data = await response.json();
-
-            if (data.error) {
-                elements.directionsDisplay.innerHTML = `<p>${data.error}</p>`;
-            } else {
-                elements.branchText.textContent = data.branch;
-                elements.floorText.textContent = data.floor;
-                elements.directionsText.textContent = data.directions;
-
-                if (data.imageUrl) {
-                    const img = new Image();
-                    img.src = data.imageUrl;
-                    img.alt = state.selectedTeacher.name;
-                    img.style = "max-width: 200px; height: auto; margin-top: 10px;";
-                    img.loading = "lazy";
-                    document.getElementById("directions-image-container").appendChild(img);
-                }
-            }
-
-            elements.directionsDisplay.style.display = "block";
-        } catch (error) {
-            console.error("Error fetching directions:", error);
-            alert("Failed to fetch directions. Please try again.");
-        }
+async function getDirections() {
+    if (!state.selectedTeacher) {
+        alert("Please select a teacher from the search results.");
+        return;
     }
 
-    elements.getDirectionsButton.addEventListener('click', getDirections);
+    try {
+        // Clear previous content while loading new data
+        elements.directionsDisplay.innerHTML = `
+            <div id="directions-content">
+                <p><strong>Branch:</strong> <span id="branch-text"></span></p>
+                <p><strong>Floor:</strong> <span id="floor-text"></span></p>
+                <p><strong>Directions:</strong></p>
+                <p id="directions-text-content"></p>
+                <div id="directions-image-container"></div>
+            </div>
+            <p class="loading-message">Loading directions...</p>
+        `;
+
+        const response = await fetch(`${API.directions}${encodeURIComponent(state.selectedTeacher.name)}`);
+        const data = await response.json();
+
+        // Get fresh references to the elements after clearing
+        const branchText = document.getElementById("branch-text");
+        const floorText = document.getElementById("floor-text");
+        const directionsText = document.getElementById("directions-text-content");
+        const imageContainer = document.getElementById("directions-image-container");
+
+        // Remove loading message
+        document.querySelector('.loading-message').remove();
+
+        if (data.error) {
+            directionsText.textContent = data.error;
+        } else {
+            branchText.textContent = data.branch;
+            floorText.textContent = `Floor ${data.floor}`;
+            directionsText.textContent = data.directions;
+
+            if (data.imageUrl) {
+                imageContainer.innerHTML = ''; // Clear any previous image
+                const img = new Image();
+                img.src = data.imageUrl;
+                img.alt = `Location of ${state.selectedTeacher.name}`;
+                img.style = "max-width: 200px; height: auto; margin-top: 10px;";
+                img.loading = "lazy";
+                imageContainer.appendChild(img);
+            }
+        }
+
+        elements.directionsDisplay.style.display = "block";
+    } catch (error) {
+        console.error("Error fetching directions:", error);
+        elements.directionsDisplay.innerHTML = `<p>Failed to fetch directions. Please try again.</p>`;
+        elements.directionsDisplay.style.display = "block";
+    }
 }
 
 // Add teacher functionality
