@@ -119,6 +119,7 @@ if (elements.teacherSearch && elements.searchResults) {
                     state.selectedTeacher = teacher;
                     elements.teacherSearch.value = teacher.name;
                     elements.searchResults.style.display = 'none';
+                    elements.directionsDisplay.style.display = 'none';
                 });
                 fragment.appendChild(div);
             });
