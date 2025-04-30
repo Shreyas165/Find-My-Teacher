@@ -161,19 +161,24 @@ if (elements.getDirectionsButton && elements.directionsDisplay) {
         if (!state.selectedTeacher) return;
 
         try {
+            // First completely clear the directions display
+            elements.directionsDisplay.innerHTML = '';
+            
             const response = await fetch(`${API.directions}${encodeURIComponent(state.selectedTeacher.name)}`);
             const data = await response.json();
 
-            // Clear and rebuild the display
-            elements.directionsDisplay.innerHTML = `
-                <div id="directions-content">
-                    <p><strong>Branch:</strong> <span id="branch-text"></span></p>
-                    <p><strong>Floor:</strong> <span id="floor-text"></span></p>
-                    <p><strong>Directions:</strong></p>
-                    <p id="directions-text-content"></p>
-                    <div id="directions-image-container"></div>
-                </div>
+            // Create fresh container structure
+            const directionsContent = document.createElement('div');
+            directionsContent.id = 'directions-content';
+            directionsContent.innerHTML = `
+                <p><strong>Branch:</strong> <span id="branch-text"></span></p>
+                <p><strong>Floor:</strong> <span id="floor-text"></span></p>
+                <p><strong>Directions:</strong></p>
+                <p id="directions-text-content"></p>
+                <div id="directions-image-container" style="display:none"></div>
             `;
+            
+            elements.directionsDisplay.appendChild(directionsContent);
 
             // Get fresh element references
             const branchText = document.getElementById("branch-text");
@@ -189,11 +194,13 @@ if (elements.getDirectionsButton && elements.directionsDisplay) {
                 directionsText.textContent = data.directions;
 
                 if (data.imageUrl) {
+                    // Completely clear previous images
+                    imageContainer.innerHTML = '';
+                    
                     // Force HTTPS and cache busting
                     let imageUrl = data.imageUrl.replace('http://', 'https://');
-                    imageUrl += `?${Date.now()}`;
+                    imageUrl += `?t=${Date.now()}`;  // More aggressive cache busting
                     
-                    imageContainer.innerHTML = '';
                     const img = new Image();
                     img.src = imageUrl;
                     img.alt = state.selectedTeacher.name;
@@ -204,8 +211,18 @@ if (elements.getDirectionsButton && elements.directionsDisplay) {
                         opacity: 0;
                         transition: opacity 0.3s ease;
                     `;
-                    img.onload = () => img.style.opacity = '1';
-                    img.onerror = () => imageContainer.innerHTML = '<p>Image unavailable</p>';
+                    
+                    // Only show container after image loads
+                    img.onload = () => {
+                        img.style.opacity = '1';
+                        imageContainer.style.display = 'block';
+                    };
+                    
+                    img.onerror = () => {
+                        imageContainer.innerHTML = '<p>Image unavailable</p>';
+                        imageContainer.style.display = 'block';
+                    };
+                    
                     imageContainer.appendChild(img);
                 }
             }
@@ -225,9 +242,8 @@ if (elements.getDirectionsButton && elements.directionsDisplay) {
         }
 
         try {
-            // Clear existing image
-            const imageContainer = document.getElementById("directions-image-container");
-            if (imageContainer) imageContainer.innerHTML = '';
+            // Clear all existing content more aggressively
+            elements.directionsDisplay.innerHTML = '';
             
             // Store teacher and reload
             sessionStorage.setItem('selectedTeacher', JSON.stringify(state.selectedTeacher));
@@ -243,6 +259,11 @@ if (elements.getDirectionsButton && elements.directionsDisplay) {
 
 // Handle page reload and auto-display directions
 document.addEventListener('DOMContentLoaded', () => {
+    // First clear any existing content
+    if (elements.directionsDisplay) {
+        elements.directionsDisplay.innerHTML = '';
+    }
+    
     const storedTeacher = sessionStorage.getItem('selectedTeacher');
     if (storedTeacher) {
         try {
@@ -254,7 +275,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             if (elements.getDirectionsButton && elements.directionsDisplay) {
-                fetchAndDisplayDirections();
+                // Add small delay to ensure complete DOM cleanup
+                setTimeout(fetchAndDisplayDirections, 50);
             }
         } catch (error) {
             console.error("Error processing stored teacher:", error);
