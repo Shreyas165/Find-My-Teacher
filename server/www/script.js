@@ -155,106 +155,79 @@ if (elements.teacherSearch && elements.searchResults) {
     });
 }
 
-// Get directions functionality
-if (elements.getDirectionsButton && elements.directionsDisplay) {
-    async function fetchAndDisplayDirections() {
-        if (!state.selectedTeacher) return;
-
-        try {
-            // First completely clear the directions display
-            elements.directionsDisplay.innerHTML = '';
-            
-            const response = await fetch(`${API.directions}${encodeURIComponent(state.selectedTeacher.name)}`);
-            const data = await response.json();
-
-            // Create fresh container structure
-            const directionsContent = document.createElement('div');
-            directionsContent.id = 'directions-content';
-            directionsContent.innerHTML = `
-                <p><strong>Branch:</strong> <span id="branch-text"></span></p>
-                <p><strong>Floor:</strong> <span id="floor-text"></span></p>
-                <p><strong>Directions:</strong></p>
-                <p id="directions-text-content"></p>
-                <div id="directions-image-container" style="display:none"></div>
-            `;
-            
-            elements.directionsDisplay.appendChild(directionsContent);
-
-            // Get fresh element references
-            const branchText = document.getElementById("branch-text");
-            const floorText = document.getElementById("floor-text");
-            const directionsText = document.getElementById("directions-text-content");
-            const imageContainer = document.getElementById("directions-image-container");
-
-            if (data.error) {
-                directionsText.textContent = data.error;
-            } else {
-                branchText.textContent = data.branch;
-                floorText.textContent = data.floor;
-                directionsText.textContent = data.directions;
-
-                if (data.imageUrl) {
-                    // Completely clear previous images
-                    imageContainer.innerHTML = '';
-                    
-                    // Force HTTPS and cache busting
-                    let imageUrl = data.imageUrl.replace('http://', 'https://');
-                    imageUrl += `?t=${Date.now()}`;  // More aggressive cache busting
-                    
-                    const img = new Image();
-                    img.src = imageUrl;
-                    img.alt = state.selectedTeacher.name;
-                    img.style.cssText = `
-                        max-width: 200px; 
-                        height: auto; 
-                        margin-top: 10px;
-                        opacity: 0;
-                        transition: opacity 0.3s ease;
-                    `;
-                    
-                    // Only show container after image loads
-                    img.onload = () => {
-                        img.style.opacity = '1';
-                        imageContainer.style.display = 'block';
-                    };
-                    
-                    img.onerror = () => {
-                        imageContainer.innerHTML = '<p>Image unavailable</p>';
-                        imageContainer.style.display = 'block';
-                    };
-                    
-                    imageContainer.appendChild(img);
-                }
+// Move these functions to top-level scope
+async function fetchAndDisplayDirections() {
+    if (!state.selectedTeacher) return;
+    try {
+        elements.directionsDisplay.innerHTML = '';
+        const response = await fetch(`${API.directions}${encodeURIComponent(state.selectedTeacher.name)}`);
+        const data = await response.json();
+        const directionsContent = document.createElement('div');
+        directionsContent.id = 'directions-content';
+        directionsContent.innerHTML = `
+            <p><strong>Branch:</strong> <span id="branch-text"></span></p>
+            <p><strong>Floor:</strong> <span id="floor-text"></span></p>
+            <p><strong>Directions:</strong></p>
+            <p id="directions-text-content"></p>
+            <div id="directions-image-container" style="display:none"></div>
+        `;
+        elements.directionsDisplay.appendChild(directionsContent);
+        const branchText = document.getElementById("branch-text");
+        const floorText = document.getElementById("floor-text");
+        const directionsText = document.getElementById("directions-text-content");
+        const imageContainer = document.getElementById("directions-image-container");
+        if (data.error) {
+            directionsText.textContent = data.error;
+        } else {
+            branchText.textContent = data.branch;
+            floorText.textContent = data.floor;
+            directionsText.textContent = data.directions;
+            if (data.imageUrl) {
+                imageContainer.innerHTML = '';
+                let imageUrl = data.imageUrl.replace('http://', 'https://');
+                imageUrl += `?t=${Date.now()}`;
+                const img = new Image();
+                img.src = imageUrl;
+                img.alt = state.selectedTeacher.name;
+                img.style.cssText = `
+                    max-width: 200px; 
+                    height: auto; 
+                    margin-top: 10px;
+                    opacity: 0;
+                    transition: opacity 0.3s ease;
+                `;
+                img.onload = () => {
+                    img.style.opacity = '1';
+                    imageContainer.style.display = 'block';
+                };
+                img.onerror = () => {
+                    imageContainer.innerHTML = '<p>Image unavailable</p>';
+                    imageContainer.style.display = 'block';
+                };
+                imageContainer.appendChild(img);
             }
-
-            elements.directionsDisplay.style.display = "block";
-        } catch (error) {
-            console.error("Error fetching directions:", error);
-            elements.directionsDisplay.innerHTML = '<p>Failed to fetch directions. Please try again.</p>';
-            elements.directionsDisplay.style.display = "block";
         }
+        elements.directionsDisplay.style.display = "block";
+    } catch (error) {
+        console.error("Error fetching directions:", error);
+        elements.directionsDisplay.innerHTML = '<p>Failed to fetch directions. Please try again.</p>';
+        elements.directionsDisplay.style.display = "block";
     }
+}
 
-    async function getDirections() {
-        if (!state.selectedTeacher) {
-            alert("Please select a teacher from the search results.");
-            return;
-        }
-
-        try {
-            // Clear all existing content more aggressively
-            elements.directionsDisplay.innerHTML = '';
-            
-            // Store teacher and reload
-            sessionStorage.setItem('selectedTeacher', JSON.stringify(state.selectedTeacher));
-            window.location.reload();
-        } catch (error) {
-            console.error("Error:", error);
-            alert("Failed to process request. Please try again.");
-        }
+async function getDirections() {
+    if (!state.selectedTeacher) {
+        alert("Please select a teacher from the search results.");
+        return;
     }
-
-    elements.getDirectionsButton.addEventListener('click', getDirections);
+    try {
+        elements.directionsDisplay.innerHTML = '';
+        sessionStorage.setItem('selectedTeacher', JSON.stringify(state.selectedTeacher));
+        window.location.reload();
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Failed to process request. Please try again.");
+    }
 }
 
 // Handle page reload and auto-display directions
@@ -421,4 +394,9 @@ if (aboutBtn && aboutDisplay) {
             aboutDisplay.style.display = 'none';
         }
     });
+}
+
+// Keep this inside the if block
+if (elements.getDirectionsButton && elements.directionsDisplay) {
+    elements.getDirectionsButton.addEventListener('click', getDirections);
 }
