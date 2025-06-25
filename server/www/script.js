@@ -79,7 +79,7 @@ if (elements.teacherSearch && elements.searchResults) {
             displaySearchResults(filteredTeachers);
         } catch (error) {
             console.error("Error searching teachers:", error);
-            elements.searchResults.innerHTML = '<div class="search-result-item">Error searching teachers</div>';
+            elements.searchResults.innerHTML = '<div class="search-result-item">Failed to load teachers. Please check your connection or try again later.</div>';
             elements.searchResults.style.display = 'block';
         }
     }
@@ -112,7 +112,7 @@ if (elements.teacherSearch && elements.searchResults) {
                     <div class="teacher-name">${highlightedName}</div>
                     <div class="teacher-details">
                         <span class="branch">${teacher.branch || ''}</span>
-                        <span class="floor">Floor ${teacher.floor || ''}</span>
+                        <span class="floor">${teacher.floor || ''}</span>
                     </div>
                 `;
 
