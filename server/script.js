@@ -24,7 +24,7 @@ const elements = {
 const API = {
     search: "https://find-my-teacher.onrender.com/api/people",
     directions: "https://find-my-teacher.onrender.com/api/directions/",
-    addTeacher: "https://find-my-teacher.onrender.com/api/add-teacher"
+    addTeacher: "https://find-my-teacher.onrender.com/api/add-teacher",
     imageBase: "https://find-my-teacher.onrender.com/api/images/"
 };
 
@@ -286,12 +286,12 @@ document.addEventListener('DOMContentLoaded', () => {
 // Add teacher functionality
 if (elements.addTeacherBtn) {
     elements.addTeacherBtn.addEventListener("click", () => {
-        const password = prompt("Please enter the admin password:");
-        if (password === "1") {
+   /*     const password = prompt("Please enter the admin password:");
+        if (password === "1") {*/
             window.location.href = "add-teacher.html";
-        } else {
+       /* } else {
             alert("Incorrect password. Please try again.");
-        }
+        }*/
     });
 }
 
