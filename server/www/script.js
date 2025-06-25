@@ -96,12 +96,12 @@ if (elements.teacherSearch && elements.searchResults) {
                 div.className = 'search-result-item';
 
                 // Highlight the matching text
-                const teacherName = teacher.name;
+                const teacherName = teacher.name || 'Unknown';
                 const searchQuery = elements.teacherSearch.value.toLowerCase();
                 const index = teacherName.toLowerCase().indexOf(searchQuery);
 
                 let highlightedName = teacherName;
-                if (index !== -1) {
+                if (index !== -1 && teacherName !== 'Unknown') {
                     const before = teacherName.substring(0, index);
                     const match = teacherName.substring(index, index + searchQuery.length);
                     const after = teacherName.substring(index + searchQuery.length);
@@ -111,8 +111,8 @@ if (elements.teacherSearch && elements.searchResults) {
                 div.innerHTML = `
                     <div class="teacher-name">${highlightedName}</div>
                     <div class="teacher-details">
-                        <span class="branch">${teacher.branch}</span>
-                        <span class="floor">Floor ${teacher.floor}</span>
+                        <span class="branch">${teacher.branch || ''}</span>
+                        <span class="floor">Floor ${teacher.floor || ''}</span>
                     </div>
                 `;
 
@@ -120,7 +120,7 @@ if (elements.teacherSearch && elements.searchResults) {
                     state.selectedTeacher = teacher;
                     elements.teacherSearch.value = teacher.name;
                     elements.searchResults.style.display = 'none';
-
+                    fetchAndDisplayDirections();
                 });
                 fragment.appendChild(div);
             });
@@ -163,7 +163,7 @@ if (elements.getDirectionsButton && elements.directionsDisplay) {
         try {
             // First completely clear the directions display
             elements.directionsDisplay.innerHTML = '';
-
+            
             const response = await fetch(`${API.directions}${encodeURIComponent(state.selectedTeacher.name)}`);
             const data = await response.json();
 
@@ -177,7 +177,7 @@ if (elements.getDirectionsButton && elements.directionsDisplay) {
                 <p id="directions-text-content"></p>
                 <div id="directions-image-container" style="display:none"></div>
             `;
-
+            
             elements.directionsDisplay.appendChild(directionsContent);
 
             // Get fresh element references
@@ -196,11 +196,11 @@ if (elements.getDirectionsButton && elements.directionsDisplay) {
                 if (data.imageUrl) {
                     // Completely clear previous images
                     imageContainer.innerHTML = '';
-
+                    
                     // Force HTTPS and cache busting
                     let imageUrl = data.imageUrl.replace('http://', 'https://');
                     imageUrl += `?t=${Date.now()}`;  // More aggressive cache busting
-
+                    
                     const img = new Image();
                     img.src = imageUrl;
                     img.alt = state.selectedTeacher.name;
@@ -211,18 +211,18 @@ if (elements.getDirectionsButton && elements.directionsDisplay) {
                         opacity: 0;
                         transition: opacity 0.3s ease;
                     `;
-
+                    
                     // Only show container after image loads
                     img.onload = () => {
                         img.style.opacity = '1';
                         imageContainer.style.display = 'block';
                     };
-
+                    
                     img.onerror = () => {
                         imageContainer.innerHTML = '<p>Image unavailable</p>';
                         imageContainer.style.display = 'block';
                     };
-
+                    
                     imageContainer.appendChild(img);
                 }
             }
@@ -244,7 +244,7 @@ if (elements.getDirectionsButton && elements.directionsDisplay) {
         try {
             // Clear all existing content more aggressively
             elements.directionsDisplay.innerHTML = '';
-
+            
             // Store teacher and reload
             sessionStorage.setItem('selectedTeacher', JSON.stringify(state.selectedTeacher));
             window.location.reload();
@@ -263,17 +263,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (elements.directionsDisplay) {
         elements.directionsDisplay.innerHTML = '';
     }
-
+    
     const storedTeacher = sessionStorage.getItem('selectedTeacher');
     if (storedTeacher) {
         try {
             state.selectedTeacher = JSON.parse(storedTeacher);
             sessionStorage.removeItem('selectedTeacher');
-
+            
             if (elements.teacherSearch) {
                 elements.teacherSearch.value = state.selectedTeacher.name;
             }
-
+            
             if (elements.getDirectionsButton && elements.directionsDisplay) {
                 // Add small delay to ensure complete DOM cleanup
                 setTimeout(fetchAndDisplayDirections, 50);
@@ -283,15 +283,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
-// Add teacher functionality
+
 if (elements.addTeacherBtn) {
     elements.addTeacherBtn.addEventListener("click", () => {
-        /*     const password = prompt("Please enter the admin password:");
-             if (password === "1") {*/
         window.location.href = "add-teacher.html";
-        /* } else {
-             alert("Incorrect password. Please try again.");
-         }*/
     });
 }
 
@@ -412,6 +407,18 @@ if (elements.submitTeacherButton && elements.addTeacherForm) {
             element.addEventListener('input', () => {
                 element.classList.remove('error');
             });
+        }
+    });
+}
+
+const aboutBtn = document.getElementById('about-btn');
+const aboutDisplay = document.getElementById('about-display');
+if (aboutBtn && aboutDisplay) {
+    aboutBtn.addEventListener('click', () => {
+        if (aboutDisplay.style.display === 'none' || aboutDisplay.style.display === '') {
+            aboutDisplay.style.display = 'block';
+        } else {
+            aboutDisplay.style.display = 'none';
         }
     });
 }
