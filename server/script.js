@@ -283,17 +283,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
-/*// Add teacher functionality
+// Add teacher functionality
 if (elements.addTeacherBtn) {
     elements.addTeacherBtn.addEventListener("click", () => {
         const password = prompt("Please enter the admin password:");
-        if (password === "admin123") {
+        if (password === "1") {
             window.location.href = "add-teacher.html";
         } else {
             alert("Incorrect password. Please try again.");
         }
     });
-}*/
+}
 
 if (elements.submitTeacherButton && elements.addTeacherForm) {
     // Create loading indicator
