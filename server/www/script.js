@@ -24,7 +24,7 @@ const elements = {
 const API = {
     search: "https://find-my-teacher.onrender.com/api/people",
     directions: "https://find-my-teacher.onrender.com/api/directions/",
-    addTeacher: "https://find-my-teacher.onrender.com/api/add-teacher"
+    addTeacher: "https://find-my-teacher.onrender.com/api/add-teacher",
     imageBase: "https://find-my-teacher.onrender.com/api/images/"
 };
 
