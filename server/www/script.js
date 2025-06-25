@@ -164,48 +164,37 @@ async function fetchAndDisplayDirections() {
         const data = await response.json();
         const directionsContent = document.createElement('div');
         directionsContent.id = 'directions-content';
+        directionsContent.className = 'teacher-card';
         directionsContent.innerHTML = `
-            <p><strong>Branch:</strong> <span id="branch-text"></span></p>
-            <p><strong>Floor:</strong> <span id="floor-text"></span></p>
-            <p><strong>Directions:</strong></p>
-            <p id="directions-text-content"></p>
+            <div class="teacher-info">
+                <div class="info-item"><strong>👤 Name:</strong> <span>${state.selectedTeacher.name || 'Unknown'}</span></div>
+                <div class="info-item"><strong>🏢 Branch:</strong> <span>${data.branch || 'N/A'}</span></div>
+                <div class="info-item"><strong>🏬 Floor:</strong> <span>${data.floor || 'N/A'}</span></div>
+            </div>
+            <div class="info-item"><strong>🧭 Directions:</strong><br><span id="directions-text-content">${data.directions || 'N/A'}</span></div>
             <div id="directions-image-container" style="display:none"></div>
         `;
         elements.directionsDisplay.appendChild(directionsContent);
-        const branchText = document.getElementById("branch-text");
-        const floorText = document.getElementById("floor-text");
-        const directionsText = document.getElementById("directions-text-content");
         const imageContainer = document.getElementById("directions-image-container");
-        if (data.error) {
-            directionsText.textContent = data.error;
-        } else {
-            branchText.textContent = data.branch;
-            floorText.textContent = data.floor;
-            directionsText.textContent = data.directions;
-            if (data.imageUrl) {
-                imageContainer.innerHTML = '';
-                let imageUrl = data.imageUrl.replace('http://', 'https://');
-                imageUrl += `?t=${Date.now()}`;
-                const img = new Image();
-                img.src = imageUrl;
-                img.alt = state.selectedTeacher.name;
-                img.style.cssText = `
-                    max-width: 200px; 
-                    height: auto; 
-                    margin-top: 10px;
-                    opacity: 0;
-                    transition: opacity 0.3s ease;
-                `;
-                img.onload = () => {
-                    img.style.opacity = '1';
-                    imageContainer.style.display = 'block';
-                };
-                img.onerror = () => {
-                    imageContainer.innerHTML = '<p>Image unavailable</p>';
-                    imageContainer.style.display = 'block';
-                };
-                imageContainer.appendChild(img);
-            }
+        if (!data.error && data.imageUrl) {
+            imageContainer.innerHTML = '';
+            let imageUrl = data.imageUrl.replace('http://', 'https://');
+            imageUrl += `?t=${Date.now()}`;
+            const img = new Image();
+            img.src = imageUrl;
+            img.alt = state.selectedTeacher.name;
+            img.className = 'teacher-image';
+            img.onload = () => {
+                imageContainer.style.display = 'block';
+            };
+            img.onerror = () => {
+                imageContainer.innerHTML = '<p>Image unavailable</p>';
+                imageContainer.style.display = 'block';
+            };
+            imageContainer.appendChild(img);
+        } else if (data.error) {
+            imageContainer.innerHTML = `<p style='color:red;'>${data.error}</p>`;
+            imageContainer.style.display = 'block';
         }
         elements.directionsDisplay.style.display = "block";
     } catch (error) {
