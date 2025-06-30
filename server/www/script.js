@@ -65,7 +65,7 @@ if (elements.teacherSearch && elements.searchResults) {
             }
 
             const response = await fetch(`${API.search}?query=${encodeURIComponent(query)}`);
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            if (!response.ok) throw new Error(`HTTP error! status: ${ response.status }`);
 
             const data = await response.json();
 
@@ -193,7 +193,7 @@ async function fetchAndDisplayDirections() {
             };
             imageContainer.appendChild(img);
         } else if (data.error) {
-            imageContainer.innerHTML = `<p style='color:red;'>${data.error}</p>`;
+            imageContainer.innerHTML = <p style='color:red;'>${data.error}</p>;
             imageContainer.style.display = 'block';
         }
         elements.directionsDisplay.style.display = "block";
@@ -225,17 +225,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (elements.directionsDisplay) {
         elements.directionsDisplay.innerHTML = '';
     }
-    
+
     const storedTeacher = sessionStorage.getItem('selectedTeacher');
     if (storedTeacher) {
         try {
             state.selectedTeacher = JSON.parse(storedTeacher);
             sessionStorage.removeItem('selectedTeacher');
-            
+
             if (elements.teacherSearch) {
                 elements.teacherSearch.value = state.selectedTeacher.name;
             }
-            
+
             if (elements.getDirectionsButton && elements.directionsDisplay) {
                 // Add small delay to ensure complete DOM cleanup
                 setTimeout(fetchAndDisplayDirections, 50);
@@ -250,12 +250,7 @@ if (elements.addTeacherBtn) {
     elements.addTeacherBtn.addEventListener("click", () => {
         const password = prompt("Enter admin password:");
         if (password === "admin123") {
-            // Hide main search UI and show add-teacher form
-            document.querySelector('.form-group').style.display = 'none'; // Hide search
-            document.getElementById('get-directions').style.display = 'none';
-            document.getElementById('about-btn').style.display = 'none';
-            document.getElementById('add-teacher-btn').style.display = 'none';
-            document.getElementById('add-teacher-form').style.display = 'block';
+            window.location.href = "add-teacher.html";
         } else if (password !== null) {
             alert("Incorrect password. Access denied.");
         }
