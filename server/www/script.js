@@ -193,7 +193,7 @@ async function fetchAndDisplayDirections() {
             };
             imageContainer.appendChild(img);
         } else if (data.error) {
-            imageContainer.innerHTML = <p style='color:red;'>${data.error}</p>;
+            imageContainer.innerHTML = `<p style='color:red;'>${data.error}</p>`;
             imageContainer.style.display = 'block';
         }
         elements.directionsDisplay.style.display = "block";
