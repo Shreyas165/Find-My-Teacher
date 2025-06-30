@@ -248,7 +248,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
 if (elements.addTeacherBtn) {
     elements.addTeacherBtn.addEventListener("click", () => {
-        window.location.href = "add-teacher.html";
+        const password = prompt("Enter admin password:");
+        if (password === "admin123") {
+            // Hide main search UI and show add-teacher form
+            document.querySelector('.form-group').style.display = 'none'; // Hide search
+            document.getElementById('get-directions').style.display = 'none';
+            document.getElementById('about-btn').style.display = 'none';
+            document.getElementById('add-teacher-btn').style.display = 'none';
+            document.getElementById('add-teacher-form').style.display = 'block';
+        } else if (password !== null) {
+            alert("Incorrect password. Access denied.");
+        }
     });
 }
 
