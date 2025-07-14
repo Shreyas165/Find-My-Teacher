@@ -64,15 +64,14 @@ if (elements.teacherSearch && elements.searchResults) {
                 return;
             }
 
-            const response = await fetch(`${API.search}?query=${encodeURIComponent(query)}`);
-            if (!response.ok) throw new Error(`HTTP error! status: ${ response.status }`);
+            // Use the optimized search endpoint
+            const response = await fetch(`https://find-my-teacher.onrender.com/api/search?query=${encodeURIComponent(query)}`);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
             const data = await response.json();
 
-            // Filter teachers based on the query
-            const filteredTeachers = data.teachers.filter(teacher =>
-                teacher.name.toLowerCase().includes(query.toLowerCase())
-            );
+            // No need to filter on frontend, backend already filters
+            const filteredTeachers = data.teachers;
 
             // Cache the filtered results
             state.cachedResults.set(query, filteredTeachers);
@@ -110,10 +109,6 @@ if (elements.teacherSearch && elements.searchResults) {
 
                 div.innerHTML = `
                     <div class="teacher-name">${highlightedName}</div>
-                    <div class="teacher-details">
-                        <span class="branch">${teacher.branch || ''}</span>
-                        <span class="floor">${teacher.floor || ''}</span>
-                    </div>
                 `;
 
                 div.addEventListener('click', () => {
