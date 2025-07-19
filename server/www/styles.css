@@ -64,6 +64,7 @@ p {
 .form-group {
     margin: clamp(15px, 3vw, 25px) 0;
     width: 100%;
+    position: relative;
 }
 
 label {
