@@ -74,7 +74,10 @@ if (elements.teacherSearch && elements.searchResults) {
             const data = await response.json();
 
             // No need to filter on frontend, backend already filters
-            const filteredTeachers = data.teachers;
+            const filteredTeachers = data.teachers.filter(teacher =>
+                teacher.name.toLowerCase().includes(query.toLowerCase())
+            );
+            
 
             // Cache the filtered results
             state.cachedResults.set(query, filteredTeachers);
