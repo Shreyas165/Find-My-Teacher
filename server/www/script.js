@@ -21,14 +21,11 @@ const elements = {
 };
 
 // API endpoints
-const API_BASE = "https://find-my-teacher.onrender.com";
 const API = {
-    search: `${API_BASE}/api/people`,
-    directions: `${API_BASE}/api/directions/`,
-    addTeacher: `${API_BASE}/api/add-teacher`,
-    imageBase: `${API_BASE}/api/images/`,
-    setPassword: `${API_BASE}/api/set-password`,
-    verifyPassword: `${API_BASE}/api/verify-password`,
+    search: "https://find-my-teacher.onrender.com/api/people",
+    directions: "https://find-my-teacher.onrender.com/api/directions/",
+    addTeacher: "https://find-my-teacher.onrender.com/api/add-teacher",
+    imageBase: "https://find-my-teacher.onrender.com/api/images/"
 };
 
 // State management
@@ -67,14 +64,15 @@ if (elements.teacherSearch && elements.searchResults) {
                 return;
             }
 
-            // Use the optimized search endpoint
             const response = await fetch(`${API.search}?query=${encodeURIComponent(query)}`);
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            if (!response.ok) throw new Error(`HTTP error! status: ${ response.status }`);
 
             const data = await response.json();
 
-            // No need to filter on frontend, backend already filters
-            const filteredTeachers = data.teachers;
+            // Filter teachers based on the query
+            const filteredTeachers = data.teachers.filter(teacher =>
+                teacher.name.toLowerCase().includes(query.toLowerCase())
+            );
 
             // Cache the filtered results
             state.cachedResults.set(query, filteredTeachers);
@@ -112,6 +110,10 @@ if (elements.teacherSearch && elements.searchResults) {
 
                 div.innerHTML = `
                     <div class="teacher-name">${highlightedName}</div>
+                    <div class="teacher-details">
+                        <span class="branch">${teacher.branch || ''}</span>
+                        <span class="floor">${teacher.floor || ''}</span>
+                    </div>
                 `;
 
                 div.addEventListener('click', () => {
@@ -246,7 +248,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 if (elements.addTeacherBtn) {
     elements.addTeacherBtn.addEventListener("click", () => {
-        showPasswordModal();
+        const password = prompt("Enter admin password:");
+        if (password === "admin123") {
+            window.location.href = "add-teacher.html";
+        } else if (password !== null) {
+            alert("Incorrect password. Access denied.");
+        }
     });
 }
 
@@ -387,153 +394,3 @@ if (aboutBtn && aboutDisplay) {
 if (elements.getDirectionsButton && elements.directionsDisplay) {
     elements.getDirectionsButton.addEventListener('click', getDirections);
 }
-
-// Bug Report button handler
-const bugReportBtn = document.getElementById('bug-report-btn');
-if (bugReportBtn) {
-    bugReportBtn.addEventListener('click', () => {
-        window.open('https://docs.google.com/forms/d/1rABA9pT5_-tKP179li9FNn_WSJzP7oNaBLhDzVXS4DQ/edit?usp=sharing_eil_se_dm&ts=687a642d', '_blank');
-    });
-}
-
-// Modal functionality
-function showPasswordModal() {
-    const modal = document.getElementById('password-modal');
-    modal.style.display = 'block';
-}
-
-function hidePasswordModal() {
-    const modal = document.getElementById('password-modal');
-    modal.style.display = 'none';
-    // Clear form
-    document.getElementById('password-form').reset();
-}
-
-function showForgotPasswordModal() {
-    const passwordModal = document.getElementById('password-modal');
-    const forgotModal = document.getElementById('forgot-password-modal');
-    passwordModal.style.display = 'none';
-    forgotModal.style.display = 'block';
-}
-
-function hideForgotPasswordModal() {
-    const modal = document.getElementById('forgot-password-modal');
-    modal.style.display = 'none';
-    // Clear form
-    document.getElementById('forgot-password-form').reset();
-}
-
-// Modal event listeners
-document.addEventListener('DOMContentLoaded', () => {
-    // Close buttons
-    const closeButtons = document.querySelectorAll('.close');
-    closeButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            hidePasswordModal();
-            hideForgotPasswordModal();
-        });
-    });
-
-    // Close modal when clicking outside
-    window.addEventListener('click', (event) => {
-        const passwordModal = document.getElementById('password-modal');
-        const forgotModal = document.getElementById('forgot-password-modal');
-
-        if (event.target === passwordModal) {
-            hidePasswordModal();
-        }
-        if (event.target === forgotModal) {
-            hideForgotPasswordModal();
-        }
-    });
-
-    // Password form submission
-    const passwordForm = document.getElementById('password-form');
-    passwordForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-
-        const username = document.getElementById('username').value.trim();
-        const password = document.getElementById('password').value;
-
-        if (!username || !password) {
-            alert('Please fill in all fields.');
-            return;
-        }
-
-        try {
-            const response = await fetch(API.verifyPassword, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ username, password }),
-            });
-
-            if (response.ok) {
-                hidePasswordModal();
-                window.location.href = "add-teacher.html";
-            } else {
-                alert("Incorrect username or password. Access denied.");
-            }
-        } catch (error) {
-            console.error("Error verifying password:", error);
-            alert("Error verifying credentials. Please try again.");
-        }
-    });
-
-    // Forgot password button
-    const forgotPasswordBtn = document.getElementById('forgot-password-btn');
-    forgotPasswordBtn.addEventListener('click', showForgotPasswordModal);
-
-    // Forgot password form submission
-    const forgotPasswordForm = document.getElementById('forgot-password-form');
-    const forgotPasswordModal = document.getElementById('forgot-password-modal');
-    let forgotMessage = document.getElementById('forgot-message');
-    if (!forgotMessage) {
-        forgotMessage = document.createElement('div');
-        forgotMessage.id = 'forgot-message';
-        forgotPasswordModal.querySelector('.modal-content').appendChild(forgotMessage);
-    }
-    forgotPasswordForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        forgotMessage.innerHTML = '';
-        const username = document.getElementById('change-username').value.trim();
-        const oldPassword = document.getElementById('old-password').value;
-        const newPassword = document.getElementById('new-password').value;
-        const confirmPassword = document.getElementById('confirm-password').value;
-        if (!username || !oldPassword || !newPassword || !confirmPassword) {
-            forgotMessage.innerHTML = '<div class="message error">Please fill in all fields.</div>';
-            return;
-        }
-        if (newPassword !== confirmPassword) {
-            forgotMessage.innerHTML = '<div class="message error">Passwords do not match.</div>';
-            return;
-        }
-        forgotMessage.innerHTML = '<div class="message">Processing...</div>';
-        forgotPasswordForm.querySelector('button[type="submit"]').disabled = true;
-        try {
-            const response = await fetch(API_BASE + "/api/change-password", {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ username, oldPassword, newPassword }),
-            });
-            const data = await response.json();
-            if (response.ok) {
-                forgotMessage.innerHTML = '<div class="message success">' + data.message + '</div>';
-                setTimeout(() => {
-                    hideForgotPasswordModal();
-                    showPasswordModal();
-                }, 1200);
-            } else {
-                forgotMessage.innerHTML = '<div class="message error">' + (data.error || 'Failed to change password.') + '</div>';
-            }
-        } catch (error) {
-            console.error("Error changing password:", error);
-            forgotMessage.innerHTML = '<div class="message error">An error occurred while changing the password.</div>';
-        } finally {
-            forgotPasswordForm.querySelector('button[type="submit"]').disabled = false;
-        }
-    });
-});
