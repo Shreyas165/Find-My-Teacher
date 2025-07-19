@@ -17,7 +17,7 @@
         </div>
         <h1>CabinCompass</h1>
 
-        <div class="form-group" style="position: relative;">
+        <div class="form-group">
             <label for="teacher-search">Search for a Teacher</label>
             <input type="text" id="teacher-search" placeholder="Type teacher's name..." autocomplete="off">
             <div id="search-results" class="search-results"></div>
@@ -76,7 +76,17 @@
                 members quickly and efficiently. We hope it makes your life easier!</p>
         </div>
 
-        <div id="directions-display" class="message-box" style="display: none;"></div>
+        <div id="directions-display" class="message-box" style="display: none;">
+            <div id="directions-text">
+                <div id="directions-image-container">
+                    <div id="directions-content">
+                        <p><strong>Branch:</strong> <span id="branch-text"></span></p>
+                        <p><strong>Floor:</strong> <span id="floor-text"></span></p>
+                        <p><strong>Directions:</strong> <span id="directions-text-content"></span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div id="add-teacher-form" class="form-group" style="display: none;">
             <h2>Add New Teacher</h2>
