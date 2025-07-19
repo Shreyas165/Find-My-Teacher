@@ -885,4 +885,17 @@ input[type="text"] {
         font-size: 15px;
         padding: 14px 0;
     }
+    .author-container {
+        flex-direction: row !important;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .author {
+        width: 50%;
+        min-width: 140px;
+        max-width: 100%;
+        margin-bottom: 0;
+    }
 }
