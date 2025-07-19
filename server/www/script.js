@@ -23,7 +23,7 @@ const elements = {
 // API endpoints
 const API_BASE = "https://find-my-teacher.onrender.com";
 const API = {
-    search: `${API_BASE}/api/people`,
+    search: `${API_BASE}/api/search`,
     directions: `${API_BASE}/api/directions/`,
     addTeacher: `${API_BASE}/api/add-teacher`,
     imageBase: `${API_BASE}/api/images/`,
