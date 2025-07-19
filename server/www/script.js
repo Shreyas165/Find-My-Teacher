@@ -51,41 +51,50 @@ const debounce = (func, wait) => {
     };
 };
 
-// Search functionality
+// Add a loading spinner element to the DOM
+const searchBox = document.getElementById('teacher-search');
+let searchSpinner = document.getElementById('search-loading-spinner');
+if (!searchSpinner && searchBox) {
+    searchSpinner = document.createElement('span');
+    searchSpinner.id = 'search-loading-spinner';
+    searchSpinner.style.display = 'none';
+    searchSpinner.style.position = 'absolute';
+    searchSpinner.style.right = '18px';
+    searchSpinner.style.top = '50%';
+    searchSpinner.style.transform = 'translateY(-50%)';
+    searchSpinner.innerHTML = `<svg width="22" height="22" viewBox="0 0 50 50"><circle cx="25" cy="25" r="20" fill="none" stroke="#007BFF" stroke-width="5" stroke-linecap="round" stroke-dasharray="31.4 31.4" transform="rotate(-90 25 25)"><animateTransform attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="1s" repeatCount="indefinite"/></circle></svg>`;
+    searchBox.parentNode.style.position = 'relative';
+    searchBox.parentNode.appendChild(searchSpinner);
+}
+
 if (elements.teacherSearch && elements.searchResults) {
     async function searchTeachers(query) {
         try {
-            // Only search if query is at least 2 characters
             if (query.length < 2) {
                 elements.searchResults.style.display = 'none';
+                if (searchSpinner) searchSpinner.style.display = 'none';
                 return;
             }
-
-            // Check cache first
+            if (searchSpinner) searchSpinner.style.display = 'inline-block';
             if (state.cachedResults.has(query)) {
                 displaySearchResults(state.cachedResults.get(query));
+                if (searchSpinner) searchSpinner.style.display = 'none';
                 return;
             }
-
-            // Use the optimized search endpoint
             const response = await fetch(`${API.search}?query=${encodeURIComponent(query)}`);
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
             const data = await response.json();
-
-            // No need to filter on frontend, backend already filters
             const filteredTeachers = data.teachers.filter(teacher =>
                 teacher.name.toLowerCase().includes(query.toLowerCase())
             );
-            
-
-            // Cache the filtered results
             state.cachedResults.set(query, filteredTeachers);
             displaySearchResults(filteredTeachers);
         } catch (error) {
             console.error("Error searching teachers:", error);
             elements.searchResults.innerHTML = '<div class="search-result-item">Failed to load teachers. Please check your connection or try again later.</div>';
             elements.searchResults.style.display = 'block';
+        } finally {
+            if (searchSpinner) searchSpinner.style.display = 'none';
         }
     }
 
