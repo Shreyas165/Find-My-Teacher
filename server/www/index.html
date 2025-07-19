@@ -17,15 +17,19 @@
         </div>
         <h1>CabinCompass</h1>
 
-        <div class="form-group">
+        <div class="form-group" style="position: relative;">
             <label for="teacher-search">Search for a Teacher</label>
             <input type="text" id="teacher-search" placeholder="Type teacher's name..." autocomplete="off">
             <div id="search-results" class="search-results"></div>
         </div>
 
-        <button id="get-directions">GET DIRECTIONS</button>
-        <button id="add-teacher-btn">ADD TEACHER</button>
-        <button id="about-btn">ABOUT</button>
+        <div class="main-buttons">
+            <button id="get-directions">GET DIRECTIONS</button>
+            <button id="add-teacher-btn">ADD TEACHER</button>
+            <button id="about-btn">ABOUT</button>
+            <button id="bug-report-btn">BUG REPORT</button>
+        </div>
+
         <div id="about-display" class="message-box" style="display: none;">
             <h2>About the Creators</h2>
             <div class="author-container">
@@ -45,7 +49,6 @@
                         <div>
                             <p><i>Information Science and Engineering</i></p>
                             <p><i>Role: Developer</i></p>
-                            <p> </p>
                         </div>
                     </div>
                 </div>
@@ -65,54 +68,82 @@
                         <div>
                             <p><i>Information Science and Engineering</i></p>
                             <p><i>Role: Developer</i></p>
-                            <p> </p>
                         </div>
                     </div>
                 </div>
             </div>
-            <p class="about-text">Inspired by the need for an easier way for students and visitors to locate facullty
+            <p class="about-text">Inspired by the need for an easier way for students and visitors to locate faculty
                 members quickly and efficiently. We hope it makes your life easier!</p>
         </div>
 
-
-
-        <div id="directions-display" class="message-box" style="display: none;">
-            <div id="directions-text">
-                <div id="directions-image-container">
-                    <div id="directions-content">
-                        <p><strong>Branch:</strong> <span id="branch-text"></span></p>
-                        <p><strong>Floor:</strong> <span id="floor-text"></span></p>
-                        <p><strong>Directions:</strong> <span id="directions-text-content"></span></p>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div id="directions-display" class="message-box" style="display: none;"></div>
 
         <div id="add-teacher-form" class="form-group" style="display: none;">
             <h2>Add New Teacher</h2>
             <label for="teacher-name">Name:</label>
             <input type="text" id="teacher-name" required>
-
             <label for="teacher-floor">Floor:</label>
             <input type="text" id="teacher-floor" required>
-
             <label for="teacher-branch">Branch:</label>
             <input type="text" id="teacher-branch" required>
-
             <label for="teacher-directions">Directions:</label>
             <textarea id="teacher-directions" required></textarea>
-
             <label for="teacher-image">Upload Image:</label>
             <input type="file" id="teacher-image" accept="image/*">
-
             <button id="submit-teacher">Submit</button>
         </div>
     </div>
 
     <div id="image-preview-container"></div>
 
-    <script src="script.js" defer></script>
+    <!-- Password Modal -->
+    <div id="password-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Admin Authentication</h2>
+            <form id="password-form">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="btn">Login</button>
+                <button type="button" id="forgot-password-btn" class="btn btn-secondary">Forgot Password?</button>
+            </form>
+        </div>
+    </div>
 
+    <!-- Forgot Password Modal -->
+    <div id="forgot-password-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Change Password</h2>
+            <form id="forgot-password-form">
+                <div class="form-group">
+                    <label for="change-username">Username:</label>
+                    <input type="text" id="change-username" required>
+                </div>
+                <div class="form-group">
+                    <label for="old-password">Old Password:</label>
+                    <input type="password" id="old-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-password">New Password:</label>
+                    <input type="password" id="new-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">Confirm New Password:</label>
+                    <input type="password" id="confirm-password" required>
+                </div>
+                <button type="submit" class="btn">Change Password</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js" defer></script>
 </body>
 
 </html>
