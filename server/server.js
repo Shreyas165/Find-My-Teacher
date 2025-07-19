@@ -120,8 +120,9 @@ app.get("/api/people", async (req, res) => {
 
 app.get("/api/search", async (req, res) => {
     try {
-        const { query } = req.query;
-        console.log(`[search] Query: '${query}'`);
+        const { query: rawQuery } = req.query;
+        const query = (rawQuery || '').trim();
+        console.log(`[search] Raw Query: '${rawQuery}', Trimmed Query: '${query}'`);
         if (!query) {
             return res.status(400).json({ error: "Search query is required" });
         }
@@ -139,7 +140,7 @@ app.get("/api/search", async (req, res) => {
                 directions: true,
                 Image: true,
             },
-            take: 20, // Limit for performance
+            take: 20,
         });
         console.log(`[search] Results: ${teachers.length}`);
         res.status(200).json({ teachers });
