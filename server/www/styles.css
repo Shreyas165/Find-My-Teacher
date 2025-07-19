@@ -861,3 +861,28 @@ input[type="text"] {
     color: #721c24;
     border: 1px solid #f5c6cb;
 }
+
+/* Main buttons grid for mobile */
+.main-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 20px 0;
+}
+
+@media (max-width: 600px) {
+    .main-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        gap: 12px;
+        margin: 20px 0;
+    }
+
+    .main-buttons button {
+        min-width: 0;
+        width: 100%;
+        font-size: 15px;
+        padding: 14px 0;
+    }
+}
