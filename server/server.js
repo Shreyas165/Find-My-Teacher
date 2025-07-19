@@ -121,27 +121,27 @@ app.get("/api/people", async (req, res) => {
 app.get("/api/search", async (req, res) => {
     try {
         const { query } = req.query;
+        console.log(`[search] Query: '${query}'`);
         if (!query) {
             return res.status(400).json({ error: "Search query is required" });
         }
-
         const teachers = await prisma.teacher.findMany({
             where: {
                 name: {
                     contains: query,
-                    mode: 'insensitive'
-                }
+                    mode: 'insensitive',
+                },
             },
             select: {
                 name: true,
                 floor: true,
                 branch: true,
                 directions: true,
-                Image: true
+                Image: true,
             },
-            take: 10 // Limit results for faster response
+            take: 20, // Limit for performance
         });
-
+        console.log(`[search] Results: ${teachers.length}`);
         res.status(200).json({ teachers });
     } catch (error) {
         console.error("Error searching teachers:", error);
