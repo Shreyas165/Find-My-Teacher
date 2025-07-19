@@ -388,6 +388,14 @@ if (elements.getDirectionsButton && elements.directionsDisplay) {
     elements.getDirectionsButton.addEventListener('click', getDirections);
 }
 
+// Bug Report button handler
+const bugReportBtn = document.getElementById('bug-report-btn');
+if (bugReportBtn) {
+    bugReportBtn.addEventListener('click', () => {
+        window.open('https://docs.google.com/forms/d/1rABA9pT5_-tKP179li9FNn_WSJzP7oNaBLhDzVXS4DQ/edit?usp=sharing_eil_se_dm&ts=687a642d', '_blank');
+    });
+}
+
 // Modal functionality
 function showPasswordModal() {
     const modal = document.getElementById('password-modal');
