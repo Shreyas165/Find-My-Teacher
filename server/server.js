@@ -419,34 +419,34 @@ app.post("/api/verify-password", async (req, res) => {
 app.put("/api/change-password", async (req, res) => {
     try {
         const { username, oldPassword, newPassword } = req.body;
-
+        console.log(`[change-password] Request for username: ${username}`);
         if (!username || !oldPassword || !newPassword) {
+            console.log('[change-password] Missing fields');
             return res.status(400).json({ error: "Username, old password, and new password are required." });
         }
-
         // Find password in database
         const passwordRecord = await prisma.password.findUnique({
             where: { username }
         });
-
+        console.log(`[change-password] Found record:`, passwordRecord);
         if (!passwordRecord) {
+            console.log('[change-password] No record found for username');
             return res.status(401).json({ error: "Invalid credentials." });
         }
-
         // Verify old password
         if (passwordRecord.password !== oldPassword) {
+            console.log(`[change-password] Old password does not match. Provided: '${oldPassword}', Actual: '${passwordRecord.password}'`);
             return res.status(401).json({ error: "Invalid old password." });
         }
-
         // Update password
         await prisma.password.update({
             where: { username },
             data: { password: newPassword }
         });
-
+        console.log(`[change-password] Password updated for username: ${username}`);
         res.status(200).json({ message: "Password changed successfully." });
     } catch (error) {
-        console.error("Error changing password:", error);
+        console.error("[change-password] Error:", error);
         res.status(500).json({ error: "Failed to change password." });
     }
 });
