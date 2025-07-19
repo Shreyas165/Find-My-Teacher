@@ -480,7 +480,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Forgot password form submission
     const forgotPasswordForm = document.getElementById('forgot-password-form');
     const forgotPasswordModal = document.getElementById('forgot-password-modal');
-    // Add a message div if not present
     let forgotMessage = document.getElementById('forgot-message');
     if (!forgotMessage) {
         forgotMessage = document.createElement('div');
@@ -490,11 +489,11 @@ document.addEventListener('DOMContentLoaded', () => {
     forgotPasswordForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         forgotMessage.innerHTML = '';
-        const username = document.getElementById('new-username').value.trim();
+        const username = document.getElementById('change-username').value.trim();
+        const oldPassword = document.getElementById('old-password').value;
         const newPassword = document.getElementById('new-password').value;
         const confirmPassword = document.getElementById('confirm-password').value;
-
-        if (!username || !newPassword || !confirmPassword) {
+        if (!username || !oldPassword || !newPassword || !confirmPassword) {
             forgotMessage.innerHTML = '<div class="message error">Please fill in all fields.</div>';
             return;
         }
@@ -502,16 +501,15 @@ document.addEventListener('DOMContentLoaded', () => {
             forgotMessage.innerHTML = '<div class="message error">Passwords do not match.</div>';
             return;
         }
-        // Show loading spinner
         forgotMessage.innerHTML = '<div class="message">Processing...</div>';
         forgotPasswordForm.querySelector('button[type="submit"]').disabled = true;
         try {
-            const response = await fetch(API.setPassword, {
-                method: "POST",
+            const response = await fetch(API_BASE + "/api/change-password", {
+                method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ username, password: newPassword }),
+                body: JSON.stringify({ username, oldPassword, newPassword }),
             });
             const data = await response.json();
             if (response.ok) {
@@ -521,11 +519,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     showPasswordModal();
                 }, 1200);
             } else {
-                forgotMessage.innerHTML = '<div class="message error">' + (data.error || 'Failed to set password.') + '</div>';
+                forgotMessage.innerHTML = '<div class="message error">' + (data.error || 'Failed to change password.') + '</div>';
             }
         } catch (error) {
-            console.error("Error setting password:", error);
-            forgotMessage.innerHTML = '<div class="message error">An error occurred while setting the password.</div>';
+            console.error("Error changing password:", error);
+            forgotMessage.innerHTML = '<div class="message error">An error occurred while changing the password.</div>';
         } finally {
             forgotPasswordForm.querySelector('button[type="submit"]').disabled = false;
         }
