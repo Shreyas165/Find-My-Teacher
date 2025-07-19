@@ -392,7 +392,7 @@ if (elements.getDirectionsButton && elements.directionsDisplay) {
 const bugReportBtn = document.getElementById('bug-report-btn');
 if (bugReportBtn) {
     bugReportBtn.addEventListener('click', () => {
-        window.open('https://forms.gle/XMYvDL4gdeBtHYfz8');
+        window.open('https://docs.google.com/forms/d/1rABA9pT5_-tKP179li9FNn_WSJzP7oNaBLhDzVXS4DQ/edit?usp=sharing_eil_se_dm&ts=687a642d', '_blank');
     });
 }
 
