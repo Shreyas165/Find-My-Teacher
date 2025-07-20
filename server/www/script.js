@@ -402,9 +402,26 @@ if (elements.getDirectionsButton && elements.directionsDisplay) {
 
 // Bug Report button handler
 const bugReportBtn = document.getElementById('bug-report-btn');
-if (bugReportBtn) {
+const bugReportModal = document.getElementById('bug-report-modal');
+const closeBugModal = document.getElementById('close-bug-modal');
+const proceedBugReport = document.getElementById('proceed-bug-report');
+
+if (bugReportBtn && bugReportModal && closeBugModal && proceedBugReport) {
     bugReportBtn.addEventListener('click', () => {
+        bugReportModal.style.display = 'block';
+    });
+    closeBugModal.addEventListener('click', () => {
+        bugReportModal.style.display = 'none';
+    });
+    proceedBugReport.addEventListener('click', () => {
+        bugReportModal.style.display = 'none';
         window.open('https://forms.gle/eZ4DYbPMtEuXT2Qo6', '_blank');
+    });
+    // Optional: close modal when clicking outside
+    window.addEventListener('click', (event) => {
+        if (event.target === bugReportModal) {
+            bugReportModal.style.display = 'none';
+        }
     });
 }
 
